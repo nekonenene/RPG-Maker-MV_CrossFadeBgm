@@ -1,6 +1,6 @@
-# RPG Maker MV Plugin : HTN_CrossFadeBgm
+# RPGツクールMV用プラグイン : BGM をクロスフェード
 
-RPGツクールMV用プラグイン : BGM をクロスフェード
+RPG Maker MV Plugin - HTN_CrossFadeBgm
 
 ## ダウンロード
 
