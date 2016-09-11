@@ -58,4 +58,4 @@ CrossFadeBgm start
 **[Twitter : @nekonenene](https://twitter.com/nekonenene)**  
 HP : http://hato-neko.x0.com/
 
-バグ報告や要望など、ぜひぜひお寄せください。
+バグ報告や要望など、ぜひぜひ [Twitter](https://twitter.com/nekonenene) や [GitHub issue](https://github.com/nekonenene/RPG-Maker-MV_CrossFadeBgm/issues) にお寄せください。
