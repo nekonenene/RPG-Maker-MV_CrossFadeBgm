@@ -15,7 +15,7 @@ RPGツクールMV用プラグイン : BGM をクロスフェード
 ## 紹介動画
 
 [![紹介動画](https://img.youtube.com/vi/keAQciFMIxQ/0.jpg)](https://www.youtube.com/watch?v=keAQciFMIxQ)  
-[↑ クリックすると YouTube に飛びます]((https://www.youtube.com/watch?v=keAQciFMIxQ))
+[↑ クリックすると YouTube に飛びます](https://www.youtube.com/watch?v=keAQciFMIxQ)
 
 
 ## プラグインコマンド
@@ -56,5 +56,6 @@ CrossFadeBgm start
 
 ハトネコエ  
 **[Twitter : @nekonenene](https://twitter.com/nekonenene)**  
+HP : http://hato-neko.x0.com/
 
 バグ報告や要望など、ぜひぜひお寄せください。
