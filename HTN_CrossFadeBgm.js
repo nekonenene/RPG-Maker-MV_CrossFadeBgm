@@ -2,11 +2,12 @@
 //
 // CrossFadeBgm
 //
-// Copyright (c) hatonekoe
+// Copyright (c) 2016 hatonekoe
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 //
-// 2016/09/10 ver0.1.0 クロスフェード機能、ひとまずの完成
+// 2016/09/11 ver0.1.1 無名BGMを再生するとクラッシュする不具合に対応、first release
+// 2016/09/11 ver0.1.0 クロスフェード機能、ひとまずの完成
 // 2016/09/10 ver0.0.1 開発開始
 //
 // --------------------------------------------------------------------------
@@ -30,11 +31,12 @@
  *   bgm_name: BGM名です。空白を含んではいけません。空白文字や日本語を含むファイル名を使うのは避けましょう
  *   volume: 音量です。0 ~ 100、ツクールの「BGMの演奏」のデフォルトだと 90
  *   pan: 音が左右のどちらに寄っているかです。-100 ~ 100、中心は 0 です
- *   pitch: 音の高さです。スピードも変わってしまうようです。0.5 ~ 2 程度にしましょう。デフォルトは 1
+ *   pitch: 音の高さです。スピードも変わってしまうようです。50 ~ 200 程度にしましょう。デフォルトは 100
  *
  *   <example>
  *   CrossFadeBgm set Ship1,90,0,100 # 例えばこのように指定できます。カンマのあとにスペースを入れてはいけません
  *   CrossFadeBgm set Ship1,,,100    # 途中の値を省略することが可能です。しかし、BGM名と音量は最低限指定した方がいいです
+ *                                   # 省略された音量などの値は、現在流れてるBGMの値が使われます
  *
  * @param Default Fade Duration Sec
  * @desc デフォルトのフェード時間（秒）
@@ -72,7 +74,7 @@
 					AudioManager.updateBgmParameters(bgm);
 				} else {
 					AudioManager.stopBgm();
-					if (bgm.name) {
+					if (bgm.name !== null) {
 						if(Decrypter.hasEncryptedAudio && AudioManager.shouldUseHtml5Audio()){
 							AudioManager.playEncryptedBgm(bgm, pos);
 						}
@@ -111,8 +113,10 @@
 			 */
 			AudioManager.stopBgm = function() {
 				AudioManager._bgmBufferArray.forEach(function(buffer) {
-					buffer.stop();
-					buffer = null;
+					if(buffer !== null) {
+						buffer.stop();
+						buffer = null;
+					}
 				});
 				BgmBuffer.setIndexForCurrentBgm(0);
 				AudioManager._bgmArray = [];
@@ -166,7 +170,16 @@
 			var newBgm = BgmBuffer.arrangeNewBgm(_newBgm, AudioManager._currentBgm);
 
 			AudioManager._bgmArray.push(newBgm);
-			AudioManager._bgmBufferArray.push(AudioManager.createBuffer('bgm', newBgm.name));
+
+			// 無名BGMも曲として扱うが、バッファーとしてはnull
+			if(newBgm.name === "") {
+				AudioManager._bgmBufferArray.push(null);
+			} else if(newBgm.name !== null) {
+				AudioManager._bgmBufferArray.push(AudioManager.createBuffer('bgm', newBgm.name));
+			} else {
+				console.warn("!!WARN!! next bgm name is null @ pushBuffer");
+				AudioManager._bgmBufferArray.push(null); // _bgmArray の個数と整合性を保つため挿入
+			}
 			console.log("Bufferの個数: " + BgmBuffer.countBuffers()); // @TODO: あとで消す
 		}
 
@@ -180,7 +193,16 @@
 			var newBgm = BgmBuffer.arrangeNewBgm(_newBgm, AudioManager._currentBgm);
 
 			AudioManager._bgmArray.unshift(newBgm);
-			AudioManager._bgmBufferArray.unshift(AudioManager.createBuffer('bgm', newBgm.name));
+
+			// 無名BGMも曲として扱うが、バッファーとしてはnull
+			if(newBgm.name === "") {
+				AudioManager._bgmBufferArray.unshift(null);
+			} else if(newBgm.name !== null) {
+				AudioManager._bgmBufferArray.unshift(AudioManager.createBuffer('bgm', newBgm.name));
+			} else {
+				console.warn("!!WARN!! next bgm name is null @ unshiftBuffer");
+				AudioManager._bgmBufferArray.unshift(null); // _bgmArray の個数と整合性を保つため挿入
+			}
 			console.log("Bufferの個数: " + BgmBuffer.countBuffers()); // @TODO: あとで消す
 		}
 
@@ -348,19 +370,19 @@
 		static arrangeNewBgm(_newBgm, _currentBgm) {
 			var newBgm = _newBgm;
 
-			if(!newBgm.name) {
+			if(newBgm.name === null) {
 				newBgm.name = _currentBgm.name;
 			}
-			if(!newBgm.volume) {
+			if(newBgm.volume === null) {
 				newBgm.volume = _currentBgm ? _currentBgm.volume : 90;
 			}
-			if(!newBgm.pitch) {
+			if(newBgm.pitch === null) {
 				newBgm.pitch = _currentBgm ? _currentBgm.pitch : 100;
 			}
-			if(!newBgm.pan) {
+			if(newBgm.pan === null) {
 				newBgm.pan = _currentBgm ? _currentBgm.pan : 0;
 			}
-			if(!newBgm.pos) {
+			if(newBgm.pos === null) {
 				newBgm.pos = _currentBgm ? _currentBgm.pos : 0;
 			}
 
@@ -418,7 +440,11 @@
 			if(0 <= index && index < length) {
 				var buffer = AudioManager._bgmBufferArray[index];
 
-				return (buffer.seek() || 0);
+				if(buffer !== null) {
+					return (buffer.seek() || 0);
+				} else {
+					return null;
+				}
 			} else {
 				console.warn("!!WARN!! index number is not valid @ fadeInBufferByIndex");
 			}
