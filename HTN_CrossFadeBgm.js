@@ -47,6 +47,8 @@
 (function() {
 	"use strict";
 
+	var pluginName = "HTN_CrossFadeBgm";
+
 	/**
 	 * bgm は Array クラス
 	 * buffer は WebAudio クラス、もしくは Html5Audio クラス
@@ -62,7 +64,6 @@
 		 * ツクールの AudioManager クラスを拡張
 		 *
 		 * @FIXME 他のプラグインが playBgm() とか拡張するとこのプラグインが動かなくなる
-		 * @FIXME _currentBgm の処理をあまりやっていないのでバグの温床
 		 */
 		static extendAudioManager() {
 			AudioManager._bgmArray = [];
@@ -175,12 +176,20 @@
 			if(newBgm.name === "") {
 				AudioManager._bgmBufferArray.push(null);
 			} else if(newBgm.name !== null) {
+				// 暗号化されたオーディオファイルの場合 @TODO 通らないっぽいので消してもいいかも
+				if(Decrypter.hasEncryptedAudio && AudioManager.shouldUseHtml5Audio()){
+					var ext = AudioManager.audioFileExt();
+					var url = AudioManager._path + 'bgm/' + encodeURIComponent(bgm.name) + ext;
+					url = Decrypter.extToEncryptExt(url);
+					Decrypter.decryptHTML5Audio(url, bgm, bgm.pos);
+					AudioManager._blobUrl = url;
+				}
 				AudioManager._bgmBufferArray.push(AudioManager.createBuffer('bgm', newBgm.name));
 			} else {
 				console.warn("!!WARN!! next bgm name is null @ pushBuffer");
 				AudioManager._bgmBufferArray.push(null); // _bgmArray の個数と整合性を保つため挿入
 			}
-			console.log("Bufferの個数: " + BgmBuffer.countBuffers()); // @TODO: あとで消す
+			// console.log("Bufferの個数: " + BgmBuffer.countBuffers()); // @TODO: あとで消す
 		}
 
 		/**
@@ -198,12 +207,21 @@
 			if(newBgm.name === "") {
 				AudioManager._bgmBufferArray.unshift(null);
 			} else if(newBgm.name !== null) {
+				// 暗号化されたオーディオファイルの場合 @TODO 通らないっぽいので消してもいいかも
+				if(Decrypter.hasEncryptedAudio && AudioManager.shouldUseHtml5Audio()){
+					var ext = AudioManager.audioFileExt();
+					var url = AudioManager._path + 'bgm/' + encodeURIComponent(bgm.name) + ext;
+					url = Decrypter.extToEncryptExt(url);
+					Decrypter.decryptHTML5Audio(url, bgm, bgm.pos);
+					AudioManager._blobUrl = url;
+				}
+
 				AudioManager._bgmBufferArray.unshift(AudioManager.createBuffer('bgm', newBgm.name));
 			} else {
 				console.warn("!!WARN!! next bgm name is null @ unshiftBuffer");
 				AudioManager._bgmBufferArray.unshift(null); // _bgmArray の個数と整合性を保つため挿入
 			}
-			console.log("Bufferの個数: " + BgmBuffer.countBuffers()); // @TODO: あとで消す
+			// console.log("Bufferの個数: " + BgmBuffer.countBuffers()); // @TODO: あとで消す
 		}
 
 		/**
@@ -454,7 +472,7 @@
 	class CrossFadeBgm {
 		constructor() {
 			// プラグインパラメーターからデフォルトフェード時間を設定
-			var parameters = PluginManager.parameters("HTN_CrossFadeBgm");
+			var parameters = PluginManager.parameters(pluginName);
 			this._defaultDurationSec = Number(parameters["Default Fade Duration Sec"]);
 			this.durationSec = this.defaultDurationSec;
 
