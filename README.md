@@ -8,13 +8,15 @@ RPGツクールMV用プラグイン : BGM をクロスフェード
 
 ダウンロードした「HTN_CrossFadeBgm.js」を `js/plugins` フォルダーの中に入れてください。
 
-プラグインの導入方法について詳しくは、公式の講座ページをご覧くださいね！ ↓  
+プラグインの導入方法について詳しくは、ツクール公式サイトの講座ページをご覧ください！ ↓  
 [RPGツクールMV 初心者講座 プラグイン編](https://tkool.jp/mv/guide/011_001.html)
+
 
 ## 紹介動画
 
 [![紹介動画](https://img.youtube.com/vi/keAQciFMIxQ/0.jpg)](https://www.youtube.com/watch?v=keAQciFMIxQ)  
-↑ クリックすると YouTube に飛びます
+[↑ クリックすると YouTube に飛びます]((https://www.youtube.com/watch?v=keAQciFMIxQ))
+
 
 ## プラグインコマンド
 
@@ -36,6 +38,7 @@ CrossFadeBgm start
 ```
 
 上のBGMの設定が終わったらあとはこのコマンドでクロスフェードの開始です。
+
 
 ## 注意点
 
