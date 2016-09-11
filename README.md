@@ -6,7 +6,7 @@ RPG Maker MV Plugin - HTN_CrossFadeBgm
 
 **[ここを右クリックして「名前を付けてリンク先を保存」みたいな項目を選んでダウンロード](https://raw.githubusercontent.com/nekonenene/RPG-Maker-MV_CrossFadeBgm/master/HTN_CrossFadeBgm.js)**
 
-ダウンロードした「HTN_CrossFadeBgm.js」を `js/plugins` フォルダーの中に入れてください。
+ダウンロードした `HTN_CrossFadeBgm.js` を `js/plugins` フォルダーの中に入れてください。
 
 プラグインの導入方法について詳しくは、ツクール公式サイトの講座ページをご覧ください！ ↓  
 [RPGツクールMV 初心者講座 プラグイン編](https://tkool.jp/mv/guide/011_001.html)
@@ -29,7 +29,7 @@ CrossFadeBgm set Ship1,90,0,100
 ```
 
 BGM名,音量,パン,ピッチの順にカンマで分けて書きます。  
-カンマのあとに空白スペースを書いてはいけませんのでご注意を。
+**カンマのあとに空白スペースを書いてはいけません** のでご注意を。
 
 ### クロスフェードの開始
 
