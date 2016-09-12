@@ -1,0 +1,17 @@
+{
+  "name": "babel-and-more",
+  "description": "convert js by babel",
+  "scripts": {
+    "deploy": "gulp deploy"
+  },
+  "author": "ハトネコエ",
+  "private": "true",
+  "devDependencies": {
+    "babel-preset-es2015": "latest",
+    "gulp": "latest",
+    "gulp-babel": "latest",
+    "gulp-replace": "latest",
+    "gulp-sourcemaps": "latest",
+    "pump": "^1.0.1"
+  }
+}
