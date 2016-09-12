@@ -6,6 +6,7 @@
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 //
+// 2016/09/13 ver0.2.0 配布jsにbabelをかまし、Internet Explorerでも動作するように
 // 2016/09/12 ver0.1.2 コメントの追加や、ログ出力のコメントアウトなど
 // 2016/09/11 ver0.1.1 無名BGMを再生するとクラッシュする不具合に対応、first release
 // 2016/09/11 ver0.1.0 クロスフェード機能、ひとまずの完成
