@@ -21,13 +21,25 @@ gulp.task('watch', function() {
 gulp.task('deploy', function(callback) {
 	pump([
 		gulp.src('source/**/*.js'),
-		sourcemaps.init(),
 		replace(/\t/g, '  '), // babel でネストが深くなるのでタブ文字を2文字スペースに
 		babel({
 			presets: ['es2015']
 		}),
 		replace(/^.*console\.log.*$\n/gm, ''), // console.log のある行を削除
-		sourcemaps.write(),
 		gulp.dest('./')
+	], callback);
+});
+
+/* dev-deploy : sourcemap 働かせつつ babel */
+gulp.task('dev-deploy', function(callback) {
+	pump([
+		gulp.src('source/**/*.js'),
+		sourcemaps.init(),
+		replace(/\t/g, '  '), // babel でネストが深くなるのでタブ文字を2文字スペースに
+		babel({
+			presets: ['es2015']
+		}),
+		sourcemaps.write(),
+		gulp.dest('./dev-dest/')
 	], callback);
 });
