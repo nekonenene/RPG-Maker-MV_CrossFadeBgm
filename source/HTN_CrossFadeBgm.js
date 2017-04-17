@@ -6,6 +6,7 @@
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 //
+// 2017/04/18 ver0.2.1 setDurationコマンドが動作していなかったので修正、startコマンドにオプション追加
 // 2016/09/13 ver0.2.0 配布jsにbabelをかまし、Internet Explorerでも動作するように
 // 2016/09/12 ver0.1.2 コメントの追加や、ログ出力のコメントアウトなど
 // 2016/09/11 ver0.1.1 無名BGMを再生するとクラッシュする不具合に対応、first release
@@ -21,10 +22,11 @@
  *
  * プラグインコマンド:
  *   CrossFadeBgm set bgm_name       # 次に流す曲を指定します
- *   CrossFadeBgm set bgm_name,60    # カンマで区切ると次に流す曲、音量などの指定が可能です。カンマのあとにスペースを入れてはいけません
+ *   CrossFadeBgm set bgm_name,60    # 曲名のほかに音量などの指定が可能です。詳細は下の【setコマンドの詳細】をご覧ください
  *   CrossFadeBgm start              # クロスフェードを開始します
- *   CrossFadeBgm setDuration 8.41   # フェード時間を定義します（この例では8.41秒）
- *   CrossFadeBgm resetDuration      # フェード時間をデフォルト値に戻します
+ *   CrossFadeBgm start 2.5          # フェード時間（この例では2.5秒）を指定しつつクロスフェードを開始します。デフォルトのフェード時間は変わりません
+ *   CrossFadeBgm setDuration 8.41   # デフォルトのフェード時間を新たに定義します（この例では8.41秒）
+ *   CrossFadeBgm resetDuration      # デフォルトのフェード時間を、プラグイン管理ウィンドウで指定している値に戻します
  *
  * 【setコマンドの詳細】
  *   CrossFadeBgm set bgm_name,volume,pan,pitch  # setコマンドでは 4つのオプションが指定できます
@@ -88,7 +90,7 @@
 				} else {
 					AudioManager.stopBgm();
 					if (bgm.name !== null) {
-						if(Decrypter.hasEncryptedAudio && AudioManager.shouldUseHtml5Audio()){
+						if (Decrypter.hasEncryptedAudio && AudioManager.shouldUseHtml5Audio()) {
 							AudioManager.playEncryptedBgm(bgm, pos);
 						}
 						else {
@@ -107,7 +109,7 @@
 			};
 
 			/** playEncryptedBgm から呼ばれる。暗号化されたBGMを再生するためのバッファを作成 */
-			AudioManager.createDecryptBuffer = function(url, bgm, pos){
+			AudioManager.createDecryptBuffer = function(url, bgm, pos) {
 				AudioManager._blobUrl = url;
 				bgm.pos = pos;
 				BgmBuffer.pushBuffer(bgm);
@@ -126,7 +128,7 @@
 			 */
 			AudioManager.stopBgm = function() {
 				AudioManager._bgmBufferArray.forEach(function(buffer) {
-					if(buffer !== null) {
+					if (buffer !== null) {
 						buffer.stop();
 						buffer = null;
 					}
@@ -148,7 +150,7 @@
 			var indexForCurrentBgm = parseInt(_indexForCurrentBgm);
 			var length = BgmBuffer.countBuffers();
 
-			if(indexForCurrentBgm === 0 || (0 <= indexForCurrentBgm && indexForCurrentBgm < length)) {
+			if (indexForCurrentBgm === 0 || (0 <= indexForCurrentBgm && indexForCurrentBgm < length)) {
 				Object.defineProperty(AudioManager, '_bgmBuffer', {
 					get: function() {
 						return AudioManager._bgmBufferArray[indexForCurrentBgm];
@@ -185,11 +187,11 @@
 			AudioManager._bgmArray.push(newBgm);
 
 			// 無名BGMも曲として扱うが、バッファーとしてはnull
-			if(newBgm.name === "") {
+			if (newBgm.name === "") {
 				AudioManager._bgmBufferArray.push(null);
-			} else if(newBgm.name !== null) {
+			} else if (newBgm.name !== null) {
 				// 暗号化されたオーディオファイルの場合 @TODO 通らないっぽいので消してもいいかも
-				if(Decrypter.hasEncryptedAudio && AudioManager.shouldUseHtml5Audio()){
+				if (Decrypter.hasEncryptedAudio && AudioManager.shouldUseHtml5Audio()) {
 					var ext = AudioManager.audioFileExt();
 					var url = AudioManager._path + 'bgm/' + encodeURIComponent(bgm.name) + ext;
 					url = Decrypter.extToEncryptExt(url);
@@ -216,11 +218,11 @@
 			AudioManager._bgmArray.unshift(newBgm);
 
 			// 無名BGMも曲として扱うが、バッファーとしてはnull
-			if(newBgm.name === "") {
+			if (newBgm.name === "") {
 				AudioManager._bgmBufferArray.unshift(null);
-			} else if(newBgm.name !== null) {
+			} else if (newBgm.name !== null) {
 				// 暗号化されたオーディオファイルの場合 @TODO 通らないっぽいので消してもいいかも
-				if(Decrypter.hasEncryptedAudio && AudioManager.shouldUseHtml5Audio()){
+				if (Decrypter.hasEncryptedAudio && AudioManager.shouldUseHtml5Audio()) {
 					var ext = AudioManager.audioFileExt();
 					var url = AudioManager._path + 'bgm/' + encodeURIComponent(bgm.name) + ext;
 					url = Decrypter.extToEncryptExt(url);
@@ -250,7 +252,7 @@
 		 */
 		static muteAllBuffers() {
 			AudioManager._bgmBufferArray.forEach(function(buffer) {
-				if(buffer !== null) {
+				if (buffer !== null) {
 					buffer.stop();
 				}
 			});
@@ -261,10 +263,10 @@
 		 */
 		static playAllBuffers() {
 			AudioManager._bgmBufferArray.forEach(function(buffer, index) {
-				if(buffer !== null) {
+				if (buffer !== null) {
 					var audioParameter = AudioManager._bgmArray[index];
 
-					if(audioParameter !== null) {
+					if (audioParameter !== null) {
 						AudioManager.updateBufferParameters(buffer, AudioManager._bgmVolume, audioParameter);
 						buffer.play(true, audioParameter.pos || 0);
 					}
@@ -281,13 +283,13 @@
 			var index = parseInt(_index);
 			var length = BgmBuffer.countBuffers();
 
-			if(0 <= index && index < length) {
+			if (0 <= index && index < length) {
 				var buffer = AudioManager._bgmBufferArray[index];
 
-				if(buffer !== null) {
+				if (buffer !== null) {
 					var audioParameter = AudioManager._bgmArray[index];
 
-					if(audioParameter !== null) {
+					if (audioParameter !== null) {
 						AudioManager.updateBufferParameters(buffer, AudioManager._bgmVolume, audioParameter);
 						buffer.play(true, audioParameter.pos || 0);
 					}
@@ -307,7 +309,7 @@
 			var length = BgmBuffer.countBuffers();
 
 			for(var i = quantity; i < length; ++i) {
-				if(AudioManager._bgmBufferArray[i] !== null) {
+				if (AudioManager._bgmBufferArray[i] !== null) {
 					AudioManager._bgmBufferArray[i].stop();
 					AudioManager._bgmBufferArray[i] = null;
 				}
@@ -328,9 +330,9 @@
 			var newBgmArray = [];
 			var newBgmBufferArray = [];
 
-			if(0 <= index && index < length) {
+			if (0 <= index && index < length) {
 				for(var i = 0; i < length; ++i) {
-					if(i !== index) {
+					if (i !== index) {
 						newBgmArray.push(AudioManager._bgmArray[i]);
 						newBgmBufferArray.push(AudioManager._bgmBufferArray[i]);
 					} else {
@@ -357,7 +359,7 @@
 			var index = parseInt(_index);
 			var length = BgmBuffer.countBuffers();
 
-			if(0 <= index && index < length) {
+			if (0 <= index && index < length) {
 				var buffer = AudioManager._bgmBufferArray[index];
 				var currentBgm = AudioManager._bgmArray[index];
 				var newBgm = BgmBuffer.arrangeNewBgm(_newBgm, currentBgm);
@@ -379,7 +381,7 @@
 			var bgmName = String(_bgmName);
 
 			AudioManager._bgmArray.forEach(function(bgm, index) {
-				if(bgm.name === bgmName) {
+				if (bgm.name === bgmName) {
 					var buffer = AudioManager._bgmBufferArray[index];
 					var currentBgm = AudioManager._bgmArray[index];
 					var newBgm = BgmBuffer.arrangeNewBgm(_newBgm, currentBgm);
@@ -400,19 +402,19 @@
 		static arrangeNewBgm(_newBgm, _currentBgm) {
 			var newBgm = _newBgm;
 
-			if(newBgm.name === null) {
+			if (newBgm.name === null) {
 				newBgm.name = _currentBgm.name;
 			}
-			if(newBgm.volume === null) {
+			if (newBgm.volume === null) {
 				newBgm.volume = _currentBgm ? _currentBgm.volume : 90;
 			}
-			if(newBgm.pitch === null) {
+			if (newBgm.pitch === null) {
 				newBgm.pitch = _currentBgm ? _currentBgm.pitch : 100;
 			}
-			if(newBgm.pan === null) {
+			if (newBgm.pan === null) {
 				newBgm.pan = _currentBgm ? _currentBgm.pan : 0;
 			}
-			if(newBgm.pos === null) {
+			if (newBgm.pos === null) {
 				newBgm.pos = _currentBgm ? _currentBgm.pos : 0;
 			}
 
@@ -430,10 +432,10 @@
 			var fadeDurationSec = Number(_fadeDurationSec);
 			var length = BgmBuffer.countBuffers();
 
-			if(0 <= index && index < length) {
+			if (0 <= index && index < length) {
 				var buffer = AudioManager._bgmBufferArray[index];
 
-				if(buffer !== null) {
+				if (buffer !== null) {
 					buffer.fadeIn(fadeDurationSec);
 				}
 			} else {
@@ -452,10 +454,10 @@
 			var fadeDurationSec = Number(_fadeDurationSec);
 			var length = BgmBuffer.countBuffers();
 
-			if(0 <= index && index < length) {
+			if (0 <= index && index < length) {
 				var buffer = AudioManager._bgmBufferArray[index];
 
-				if(buffer !== null) {
+				if (buffer !== null) {
 					buffer.fadeOut(fadeDurationSec);
 				}
 			} else {
@@ -467,10 +469,10 @@
 			var index = parseInt(_index);
 			var length = BgmBuffer.countBuffers();
 
-			if(0 <= index && index < length) {
+			if (0 <= index && index < length) {
 				var buffer = AudioManager._bgmBufferArray[index];
 
-				if(buffer !== null) {
+				if (buffer !== null) {
 					return (buffer.seek() || 0);
 				} else {
 					return null;
@@ -501,9 +503,14 @@
 		}
 
 		/** クロスフェードを開始 */
-		startCrossFade() {
-			if(AudioManager._currentBgm !== null) {
-				if(this.nextBgm.name !== AudioManager._currentBgm.name) {
+		startCrossFade(_durationSec) {
+			var durationSec = this.durationSec;
+			if (Number(_durationSec) > 0) {
+				durationSec = Number(_durationSec);
+			}
+
+			if (AudioManager._currentBgm !== null) {
+				if (this.nextBgm.name !== AudioManager._currentBgm.name) {
 					this.nextBgm = BgmBuffer.arrangeNewBgm(this.nextBgm, AudioManager._currentBgm);
 
 					var position = BgmBuffer.getBuffersPositionByIndex(0);
@@ -514,20 +521,22 @@
 					BgmBuffer.reduceBuffers(2);
 					BgmBuffer.playAllBuffers();
 
-					BgmBuffer.fadeInBufferByIndex(0, this.durationSec * 0.75);
-					BgmBuffer.fadeOutBufferByIndex(1, this.durationSec);
+					BgmBuffer.fadeInBufferByIndex(0, durationSec * 0.75);
+					BgmBuffer.fadeOutBufferByIndex(1, durationSec);
 				}
 			} else {
 				BgmBuffer.unshiftBuffer(this.nextBgm);
 				BgmBuffer.reduceBuffers(2);
 				BgmBuffer.playAllBuffers();
-				BgmBuffer.fadeInBufferByIndex(0, this.durationSec * 0.75);
+				BgmBuffer.fadeInBufferByIndex(0, durationSec * 0.75);
 			}
 		}
 
 		/** フェード時間(s)を設定 */
-		setDuration(durationSec) {
-			this.durationSec = Number(durationSec);
+		setDuration(_durationSec) {
+			if (Number(_durationSec) > 0) {
+				this.durationSec = Number(_durationSec);
+			}
 		}
 
 		/** フェード時間(s)をデフォルトにリセット */
@@ -578,9 +587,9 @@
 							crossFadeBgmClass.setAll(args[1]);
 							break;
 						case "start":
-							crossFadeBgmClass.startCrossFade();
+							crossFadeBgmClass.startCrossFade(args[1]);
 							break;
-						case "durationSec":
+						case "setDuration":
 							crossFadeBgmClass.setDuration(args[1]);
 							break;
 						case "resetDuration":

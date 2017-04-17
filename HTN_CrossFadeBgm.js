@@ -12,6 +12,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 //
+// 2017/04/18 ver0.2.1 setDurationコマンドが動作していなかったので修正、startコマンドにオプション追加
 // 2016/09/13 ver0.2.0 配布jsにbabelをかまし、Internet Explorerでも動作するように
 // 2016/09/12 ver0.1.2 コメントの追加や、ログ出力のコメントアウトなど
 // 2016/09/11 ver0.1.1 無名BGMを再生するとクラッシュする不具合に対応、first release
@@ -27,10 +28,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *
  * プラグインコマンド:
  *   CrossFadeBgm set bgm_name       # 次に流す曲を指定します
- *   CrossFadeBgm set bgm_name,60    # カンマで区切ると次に流す曲、音量などの指定が可能です。カンマのあとにスペースを入れてはいけません
+ *   CrossFadeBgm set bgm_name,60    # 曲名のほかに音量などの指定が可能です。詳細は下の【setコマンドの詳細】をご覧ください
  *   CrossFadeBgm start              # クロスフェードを開始します
- *   CrossFadeBgm setDuration 8.41   # フェード時間を定義します（この例では8.41秒）
- *   CrossFadeBgm resetDuration      # フェード時間をデフォルト値に戻します
+ *   CrossFadeBgm start 2.5          # フェード時間（この例では2.5秒）を指定しつつクロスフェードを開始します。デフォルトのフェード時間は変わりません
+ *   CrossFadeBgm setDuration 8.41   # デフォルトのフェード時間を新たに定義します（この例では8.41秒）
+ *   CrossFadeBgm resetDuration      # デフォルトのフェード時間を、プラグイン管理ウィンドウで指定している値に戻します
  *
  * 【setコマンドの詳細】
  *   CrossFadeBgm set bgm_name,volume,pan,pitch  # setコマンドでは 4つのオプションが指定できます
@@ -560,7 +562,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
       /** クロスフェードを開始 */
-      value: function startCrossFade() {
+      value: function startCrossFade(_durationSec) {
+        var durationSec = this.durationSec;
+        if (Number(_durationSec) > 0) {
+          durationSec = Number(_durationSec);
+        }
+
         if (AudioManager._currentBgm !== null) {
           if (this.nextBgm.name !== AudioManager._currentBgm.name) {
             this.nextBgm = BgmBuffer.arrangeNewBgm(this.nextBgm, AudioManager._currentBgm);
@@ -573,14 +580,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             BgmBuffer.reduceBuffers(2);
             BgmBuffer.playAllBuffers();
 
-            BgmBuffer.fadeInBufferByIndex(0, this.durationSec * 0.75);
-            BgmBuffer.fadeOutBufferByIndex(1, this.durationSec);
+            BgmBuffer.fadeInBufferByIndex(0, durationSec * 0.75);
+            BgmBuffer.fadeOutBufferByIndex(1, durationSec);
           }
         } else {
           BgmBuffer.unshiftBuffer(this.nextBgm);
           BgmBuffer.reduceBuffers(2);
           BgmBuffer.playAllBuffers();
-          BgmBuffer.fadeInBufferByIndex(0, this.durationSec * 0.75);
+          BgmBuffer.fadeInBufferByIndex(0, durationSec * 0.75);
         }
       }
 
@@ -588,8 +595,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     }, {
       key: "setDuration",
-      value: function setDuration(durationSec) {
-        this.durationSec = Number(durationSec);
+      value: function setDuration(_durationSec) {
+        if (Number(_durationSec) > 0) {
+          this.durationSec = Number(_durationSec);
+        }
       }
 
       /** フェード時間(s)をデフォルトにリセット */
@@ -653,9 +662,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 crossFadeBgmClass.setAll(args[1]);
                 break;
               case "start":
-                crossFadeBgmClass.startCrossFade();
+                crossFadeBgmClass.startCrossFade(args[1]);
                 break;
-              case "durationSec":
+              case "setDuration":
                 crossFadeBgmClass.setDuration(args[1]);
                 break;
               case "resetDuration":
