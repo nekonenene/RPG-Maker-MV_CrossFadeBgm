@@ -1,45 +1,43 @@
-var pump = require('pump');
-var gulp = require('gulp');
+const pump = require('pump');
+const gulp = require('gulp');
 
 // gulp plugins
-var sourcemaps = require('gulp-sourcemaps');
-var replace = require('gulp-replace');
+const sourcemaps = require('gulp-sourcemaps');
+const replace = require('gulp-replace');
 
 // gulp for JavaScript
-var babel  = require('gulp-babel');
+const babel = require('gulp-babel');
 
+/* deploy : console.log の行を消したのち babel */
+gulp.task('deploy', function(callback) {
+  pump([
+    gulp.src('source/**/*.js'),
+    replace(/^.*console\.log.*$\n/gm, ''), // console.log のある行を削除
+    babel({
+      presets: ['@babel/preset-env'],
+      minified: true,
+    }),
+    gulp.dest('./')
+  ], callback);
+});
 
-/* gulp とコマンドを打つと実行される */
-gulp.task('default', ['watch'] );
+/* dev-deploy : sourcemap を働かせつつ babel */
+gulp.task('dev-deploy', function(callback) {
+  pump([
+    gulp.src('source/**/*.js'),
+    sourcemaps.init(),
+    babel({
+      presets: ['@babel/preset-env']
+    }),
+    sourcemaps.write(),
+    gulp.dest('./dev-dest/')
+  ], callback);
+});
 
 /* gulp watch */
-gulp.task('watch', function() {
-	gulp.watch(['source/**/*.js'], ['deploy']);
+gulp.task('watch', function () {
+  gulp.watch(['source/**/*.js'], gulp.parallel('deploy', 'dev-deploy'));
 });
 
-/* deploy : babel して console.log の行は消す */
-gulp.task('deploy', function(callback) {
-	pump([
-		gulp.src('source/**/*.js'),
-		replace(/^.*console\.log.*$\n/gm, ''), // console.log のある行を削除
-		replace(/\t/g, '  '), // babel でネストが深くなるのでタブ文字を2文字スペースに
-		babel({
-			presets: ['es2015']
-		}),
-		gulp.dest('./')
-	], callback);
-});
-
-/* dev-deploy : sourcemap 働かせつつ babel */
-gulp.task('dev-deploy', function(callback) {
-	pump([
-		gulp.src('source/**/*.js'),
-		sourcemaps.init(),
-		replace(/\t/g, '  '), // babel でネストが深くなるのでタブ文字を2文字スペースに
-		babel({
-			presets: ['es2015']
-		}),
-		sourcemaps.write(),
-		gulp.dest('./dev-dest/')
-	], callback);
-});
+/* gulp とコマンドを打つと実行される */
+gulp.task('default', gulp.parallel('watch'));
