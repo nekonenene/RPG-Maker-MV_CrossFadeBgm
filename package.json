@@ -8,6 +8,7 @@
   "author": "ハトネコエ",
   "private": "true",
   "devDependencies": {
+    "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
