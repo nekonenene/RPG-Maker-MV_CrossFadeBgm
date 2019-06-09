@@ -61,7 +61,7 @@
 (function() {
   "use strict";
 
-  var pluginName = "HTN_CrossFadeBgm";
+  const pluginName = "HTN_CrossFadeBgm";
 
   /**
    * bgm は Array クラス
@@ -147,8 +147,8 @@
      * @param _indexForCurrentBgm: Number _bgmBuffer, _currentBgm の対象となる配列のindex(0~)
      */
     static setIndexForCurrentBgm(_indexForCurrentBgm) {
-      var indexForCurrentBgm = parseInt(_indexForCurrentBgm);
-      var length = BgmBuffer.countBuffers();
+      const indexForCurrentBgm = parseInt(_indexForCurrentBgm);
+      const length = BgmBuffer.countBuffers();
 
       if (indexForCurrentBgm === 0 || (0 <= indexForCurrentBgm && indexForCurrentBgm < length)) {
         Object.defineProperty(AudioManager, '_bgmBuffer', {
@@ -182,7 +182,7 @@
      */
     static pushBuffer(_newBgm) {
       // 未定義の部分は現在の曲の値をセットしてあげる
-      var newBgm = BgmBuffer.arrangeNewBgm(_newBgm, AudioManager._currentBgm);
+      const newBgm = BgmBuffer.arrangeNewBgm(_newBgm, AudioManager._currentBgm);
 
       AudioManager._bgmArray.push(newBgm);
 
@@ -192,13 +192,13 @@
       } else if (newBgm.name !== null) {
         // 暗号化されたオーディオファイルの場合 @TODO 通らないっぽいので消してもいいかも
         if (Decrypter.hasEncryptedAudio && AudioManager.shouldUseHtml5Audio()) {
-          var ext = AudioManager.audioFileExt();
-          var url = AudioManager._path + 'bgm/' + encodeURIComponent(bgm.name) + ext;
+          const ext = AudioManager.audioFileExt();
+          const url = AudioManager._path + "bgm/" + encodeURIComponent(bgm.name) + ext;
           url = Decrypter.extToEncryptExt(url);
           Decrypter.decryptHTML5Audio(url, bgm, bgm.pos);
           AudioManager._blobUrl = url;
         }
-        AudioManager._bgmBufferArray.push(AudioManager.createBuffer('bgm', newBgm.name));
+        AudioManager._bgmBufferArray.push(AudioManager.createBuffer("bgm", newBgm.name));
       } else {
         console.warn("!!WARN!! next bgm name is null @ pushBuffer");
         AudioManager._bgmBufferArray.push(null); // _bgmArray の個数と整合性を保つため挿入
@@ -213,7 +213,7 @@
      */
     static unshiftBuffer(_newBgm) {
       // 未定義の部分は現在の曲の値をセットしてあげる
-      var newBgm = BgmBuffer.arrangeNewBgm(_newBgm, AudioManager._currentBgm);
+      const newBgm = BgmBuffer.arrangeNewBgm(_newBgm, AudioManager._currentBgm);
 
       AudioManager._bgmArray.unshift(newBgm);
 
@@ -223,14 +223,14 @@
       } else if (newBgm.name !== null) {
         // 暗号化されたオーディオファイルの場合 @TODO 通らないっぽいので消してもいいかも
         if (Decrypter.hasEncryptedAudio && AudioManager.shouldUseHtml5Audio()) {
-          var ext = AudioManager.audioFileExt();
-          var url = AudioManager._path + 'bgm/' + encodeURIComponent(bgm.name) + ext;
+          const ext = AudioManager.audioFileExt();
+          const url = AudioManager._path + "bgm/" + encodeURIComponent(bgm.name) + ext;
           url = Decrypter.extToEncryptExt(url);
           Decrypter.decryptHTML5Audio(url, bgm, bgm.pos);
           AudioManager._blobUrl = url;
         }
 
-        AudioManager._bgmBufferArray.unshift(AudioManager.createBuffer('bgm', newBgm.name));
+        AudioManager._bgmBufferArray.unshift(AudioManager.createBuffer("bgm", newBgm.name));
       } else {
         console.warn("!!WARN!! next bgm name is null @ unshiftBuffer");
         AudioManager._bgmBufferArray.unshift(null); // _bgmArray の個数と整合性を保つため挿入
@@ -264,7 +264,7 @@
     static playAllBuffers() {
       AudioManager._bgmBufferArray.forEach(function(buffer, index) {
         if (buffer !== null) {
-          var audioParameter = AudioManager._bgmArray[index];
+          const audioParameter = AudioManager._bgmArray[index];
 
           if (audioParameter !== null) {
             AudioManager.updateBufferParameters(buffer, AudioManager._bgmVolume, audioParameter);
@@ -280,14 +280,14 @@
      * @param _index: Number 対象バッファーの、バッファー配列におけるインデックス(0~)
      */
     static playBufferByIndex(_index) {
-      var index = parseInt(_index);
-      var length = BgmBuffer.countBuffers();
+      const index = parseInt(_index);
+      const length = BgmBuffer.countBuffers();
 
       if (0 <= index && index < length) {
-        var buffer = AudioManager._bgmBufferArray[index];
+        const buffer = AudioManager._bgmBufferArray[index];
 
         if (buffer !== null) {
-          var audioParameter = AudioManager._bgmArray[index];
+          const audioParameter = AudioManager._bgmArray[index];
 
           if (audioParameter !== null) {
             AudioManager.updateBufferParameters(buffer, AudioManager._bgmVolume, audioParameter);
@@ -305,10 +305,10 @@
      * @param quantity: Number この数に buffer の個数を減らす
      */
     static reduceBuffers(_quantity) {
-      var quantity = parseInt(_quantity);
-      var length = BgmBuffer.countBuffers();
+      const quantity = parseInt(_quantity);
+      const length = BgmBuffer.countBuffers();
 
-      for(var i = quantity; i < length; ++i) {
+      for (let i = quantity; i < length; ++i) {
         if (AudioManager._bgmBufferArray[i] !== null) {
           AudioManager._bgmBufferArray[i].stop();
           AudioManager._bgmBufferArray[i] = null;
@@ -324,14 +324,14 @@
      * @param _index: Number 対象バッファーの、バッファー配列におけるインデックス(0~)
      */
     static removeBufferByIndex(_index) {
-      var index = parseInt(_index);
-      var length = BgmBuffer.countBuffers();
+      const index = parseInt(_index);
+      const length = BgmBuffer.countBuffers();
 
-      var newBgmArray = [];
-      var newBgmBufferArray = [];
+      const newBgmArray = [];
+      const newBgmBufferArray = [];
 
       if (0 <= index && index < length) {
-        for(var i = 0; i < length; ++i) {
+        for (let i = 0; i < length; ++i) {
           if (i !== index) {
             newBgmArray.push(AudioManager._bgmArray[i]);
             newBgmBufferArray.push(AudioManager._bgmBufferArray[i]);
@@ -356,13 +356,13 @@
      * @param _newBgm: Array 例 {name: "bgm_title", volume: 90, pitch: 100, pan: 0, pos: 0}
      */
     static updateBufferByIndex(_index, _newBgm) {
-      var index = parseInt(_index);
-      var length = BgmBuffer.countBuffers();
+      const index = parseInt(_index);
+      const length = BgmBuffer.countBuffers();
 
       if (0 <= index && index < length) {
-        var buffer = AudioManager._bgmBufferArray[index];
-        var currentBgm = AudioManager._bgmArray[index];
-        var newBgm = BgmBuffer.arrangeNewBgm(_newBgm, currentBgm);
+        const buffer = AudioManager._bgmBufferArray[index];
+        const currentBgm = AudioManager._bgmArray[index];
+        const newBgm = BgmBuffer.arrangeNewBgm(_newBgm, currentBgm);
 
         AudioManager._bgmArray[index] = newBgm;
         AudioManager.updateBufferParameters(buffer, AudioManager._bgmVolume, newBgm);
@@ -378,13 +378,13 @@
      * @param _newBgm: Array 例 {name: "bgm_title", volume: 90, pitch: 100, pan: 0, pos: 0}
      */
     static updateBufferByBgmName(_bgmName, _newBgm) {
-      var bgmName = String(_bgmName);
+      const bgmName = String(_bgmName);
 
       AudioManager._bgmArray.forEach(function(bgm, index) {
         if (bgm.name === bgmName) {
-          var buffer = AudioManager._bgmBufferArray[index];
-          var currentBgm = AudioManager._bgmArray[index];
-          var newBgm = BgmBuffer.arrangeNewBgm(_newBgm, currentBgm);
+          const buffer = AudioManager._bgmBufferArray[index];
+          const currentBgm = AudioManager._bgmArray[index];
+          const newBgm = BgmBuffer.arrangeNewBgm(_newBgm, currentBgm);
 
           AudioManager._bgmArray[index] = newBgm;
           AudioManager.updateBufferParameters(buffer, AudioManager._bgmVolume, newBgm);
@@ -400,7 +400,7 @@
      * @return newBgm: Array 調整された新しい BGM
      */
     static arrangeNewBgm(_newBgm, _currentBgm) {
-      var newBgm = _newBgm;
+      const newBgm = _newBgm;
 
       if (newBgm.name === null) {
         newBgm.name = _currentBgm.name;
@@ -428,12 +428,12 @@
      * @param _fadeDurationSec: Number フェードインにかける時間（秒）
      */
     static fadeInBufferByIndex(_index, _fadeDurationSec) {
-      var index = parseInt(_index);
-      var fadeDurationSec = Number(_fadeDurationSec);
-      var length = BgmBuffer.countBuffers();
+      const index = parseInt(_index);
+      const fadeDurationSec = Number(_fadeDurationSec);
+      const length = BgmBuffer.countBuffers();
 
       if (0 <= index && index < length) {
-        var buffer = AudioManager._bgmBufferArray[index];
+        const buffer = AudioManager._bgmBufferArray[index];
 
         if (buffer !== null) {
           buffer.fadeIn(fadeDurationSec);
@@ -450,12 +450,12 @@
      * @param _fadeDurationSec: Number フェードアウトにかける時間（秒）
      */
     static fadeOutBufferByIndex(_index, _fadeDurationSec) {
-      var index = parseInt(_index);
-      var fadeDurationSec = Number(_fadeDurationSec);
-      var length = BgmBuffer.countBuffers();
+      const index = parseInt(_index);
+      const fadeDurationSec = Number(_fadeDurationSec);
+      const length = BgmBuffer.countBuffers();
 
       if (0 <= index && index < length) {
-        var buffer = AudioManager._bgmBufferArray[index];
+        const buffer = AudioManager._bgmBufferArray[index];
 
         if (buffer !== null) {
           buffer.fadeOut(fadeDurationSec);
@@ -466,11 +466,11 @@
     }
 
     static getBuffersPositionByIndex(_index) {
-      var index = parseInt(_index);
-      var length = BgmBuffer.countBuffers();
+      const index = parseInt(_index);
+      const length = BgmBuffer.countBuffers();
 
       if (0 <= index && index < length) {
-        var buffer = AudioManager._bgmBufferArray[index];
+        const buffer = AudioManager._bgmBufferArray[index];
 
         if (buffer !== null) {
           return (buffer.seek() || 0);
@@ -486,7 +486,7 @@
   class CrossFadeBgm {
     constructor() {
       // プラグインパラメーターからデフォルトフェード時間を設定
-      var parameters = PluginManager.parameters(pluginName);
+      const parameters = PluginManager.parameters(pluginName);
       this._defaultDurationSec = Number(parameters["Default Fade Duration Sec"]);
       this.durationSec = this.defaultDurationSec;
 
@@ -504,7 +504,7 @@
 
     /** クロスフェードを開始 */
     startCrossFade(_durationSec) {
-      var durationSec = this.durationSec;
+      let durationSec = this.durationSec;
       if (Number(_durationSec) > 0) {
         durationSec = Number(_durationSec);
       }
@@ -513,7 +513,7 @@
         if (this.nextBgm.name !== AudioManager._currentBgm.name) {
           this.nextBgm = BgmBuffer.arrangeNewBgm(this.nextBgm, AudioManager._currentBgm);
 
-          var position = BgmBuffer.getBuffersPositionByIndex(0);
+          const position = BgmBuffer.getBuffersPositionByIndex(0);
           this.nextBgm.pos = position;
           AudioManager._currentBgm.pos = position;
 
@@ -553,7 +553,7 @@
      * @param _args: String
      */
     setAll(_args) {
-      var argsArray = _args.split(",");
+      const argsArray = _args.split(",");
 
       const name   = (argsArray[0] == null || argsArray[0] === "") ? null : String(argsArray[0]);
       const volume = isNaN(parseFloat(argsArray[1])) ? null : Number(argsArray[1]);
@@ -574,9 +574,9 @@
      * プラグインコマンドを登録
      */
     static initPluginCommands() {
-      var crossFadeBgmClass = new CrossFadeBgm();
+      const crossFadeBgmClass = new CrossFadeBgm();
 
-      var _Game_Interpreter_pluginCommand =
+      const _Game_Interpreter_pluginCommand =
         Game_Interpreter.prototype.pluginCommand;
 
       Game_Interpreter.prototype.pluginCommand = function(command, args) {
