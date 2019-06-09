@@ -13,6 +13,6 @@
     "gulp-babel": "^8.0.0",
     "gulp-replace": "^1.0.0",
     "gulp-sourcemaps": "^2.6.5",
-    "pump": "^1.0.3"
+    "pump": "^3.0.0"
   }
 }
