@@ -1,8 +1,10 @@
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 // --------------------------------------------------------------------------
 //
@@ -20,6 +22,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // 2016/09/10 ver0.0.1 開発開始
 //
 // --------------------------------------------------------------------------
+
 /*:
  * @plugindesc BGMをクロスフェード
  * @author ハトネコエ - http://hato-neko.x0.com
@@ -63,25 +66,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * @default 1.20
  *
  */
-
 (function () {
   "use strict";
 
   var pluginName = "HTN_CrossFadeBgm";
-
   /**
    * bgm は Array クラス
    * buffer は WebAudio クラス、もしくは Html5Audio クラス
    */
 
-  var BgmBuffer = function () {
+  var BgmBuffer =
+  /*#__PURE__*/
+  function () {
     function BgmBuffer() {
       _classCallCheck(this, BgmBuffer);
 
       BgmBuffer.extendAudioManager();
       BgmBuffer.setIndexForCurrentBgm(0);
     }
-
     /**
      * ツクールの AudioManager クラスを拡張
      *
@@ -94,49 +96,54 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function extendAudioManager() {
         AudioManager._bgmArray = [];
         AudioManager._bgmBufferArray = [];
-
         /** BGM の再生 */
+
         AudioManager.playBgm = function (bgm, pos) {
           if (AudioManager.isCurrentBgm(bgm)) {
             AudioManager.updateBgmParameters(bgm);
           } else {
             AudioManager.stopBgm();
+
             if (bgm.name !== null) {
               if (Decrypter.hasEncryptedAudio && AudioManager.shouldUseHtml5Audio()) {
                 AudioManager.playEncryptedBgm(bgm, pos);
               } else {
                 bgm.pos = pos;
-                BgmBuffer.pushBuffer(bgm);
-                // AudioManager._bgmBuffer = AudioManager.createBuffer('bgm', bgm.name);
+                BgmBuffer.pushBuffer(bgm); // AudioManager._bgmBuffer = AudioManager.createBuffer('bgm', bgm.name);
+
                 AudioManager.updateBgmParameters(bgm);
+
                 if (!AudioManager._meBuffer) {
                   // AudioManager._bgmBuffer.play(true, pos || 0);
                   BgmBuffer.playAllBuffers();
                 }
               }
             }
-          }
-          // AudioManager.updateCurrentBgm(bgm, pos);
-        };
+          } // AudioManager.updateCurrentBgm(bgm, pos);
 
+        };
         /** playEncryptedBgm から呼ばれる。暗号化されたBGMを再生するためのバッファを作成 */
+
+
         AudioManager.createDecryptBuffer = function (url, bgm, pos) {
           AudioManager._blobUrl = url;
           bgm.pos = pos;
-          BgmBuffer.pushBuffer(bgm);
-          // AudioManager._bgmBuffer = AudioManager.createBuffer('bgm', bgm.name);
+          BgmBuffer.pushBuffer(bgm); // AudioManager._bgmBuffer = AudioManager.createBuffer('bgm', bgm.name);
+
           AudioManager.updateBgmParameters(bgm);
+
           if (!AudioManager._meBuffer) {
             // AudioManager._bgmBuffer.play(true, pos || 0);
             BgmBuffer.playAllBuffers();
-          }
-          // AudioManager.updateCurrentBgm(bgm, pos);
-        };
+          } // AudioManager.updateCurrentBgm(bgm, pos);
 
+        };
         /**
          * BGM の再生停止
          * バッファー配列は空にする
          */
+
+
         AudioManager.stopBgm = function () {
           AudioManager._bgmBufferArray.forEach(function (buffer) {
             if (buffer !== null) {
@@ -144,12 +151,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               buffer = null;
             }
           });
+
           BgmBuffer.setIndexForCurrentBgm(0);
           AudioManager._bgmArray = [];
           AudioManager._bgmBufferArray = [];
         };
       }
-
       /**
        * _bgmBuffer は AudioManager._bgmBufferArray から読み取る
        * _currentBgm は AudioManager._bgmArray から読み取る
@@ -174,7 +181,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             },
             configurable: true
           });
-
           Object.defineProperty(AudioManager, '_currentBgm', {
             get: function get() {
               return AudioManager._bgmArray[indexForCurrentBgm];
@@ -188,7 +194,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           console.warn("!!WARN!! index number is not valid @ setIndexForCurrentBgm");
         }
       }
-
       /**
        * バッファーを後ろに足す
        *
@@ -201,9 +206,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         // 未定義の部分は現在の曲の値をセットしてあげる
         var newBgm = BgmBuffer.arrangeNewBgm(_newBgm, AudioManager._currentBgm);
 
-        AudioManager._bgmArray.push(newBgm);
+        AudioManager._bgmArray.push(newBgm); // 無名BGMも曲として扱うが、バッファーとしてはnull
 
-        // 無名BGMも曲として扱うが、バッファーとしてはnull
+
         if (newBgm.name === "") {
           AudioManager._bgmBufferArray.push(null);
         } else if (newBgm.name !== null) {
@@ -215,13 +220,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             Decrypter.decryptHTML5Audio(url, bgm, bgm.pos);
             AudioManager._blobUrl = url;
           }
+
           AudioManager._bgmBufferArray.push(AudioManager.createBuffer('bgm', newBgm.name));
         } else {
           console.warn("!!WARN!! next bgm name is null @ pushBuffer");
+
           AudioManager._bgmBufferArray.push(null); // _bgmArray の個数と整合性を保つため挿入
+
         }
       }
-
       /**
        * バッファーを先頭に足す
        *
@@ -234,9 +241,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         // 未定義の部分は現在の曲の値をセットしてあげる
         var newBgm = BgmBuffer.arrangeNewBgm(_newBgm, AudioManager._currentBgm);
 
-        AudioManager._bgmArray.unshift(newBgm);
+        AudioManager._bgmArray.unshift(newBgm); // 無名BGMも曲として扱うが、バッファーとしてはnull
 
-        // 無名BGMも曲として扱うが、バッファーとしてはnull
+
         if (newBgm.name === "") {
           AudioManager._bgmBufferArray.unshift(null);
         } else if (newBgm.name !== null) {
@@ -252,10 +259,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           AudioManager._bgmBufferArray.unshift(AudioManager.createBuffer('bgm', newBgm.name));
         } else {
           console.warn("!!WARN!! next bgm name is null @ unshiftBuffer");
+
           AudioManager._bgmBufferArray.unshift(null); // _bgmArray の個数と整合性を保つため挿入
+
         }
       }
-
       /**
        * バッファーの個数を数える
        *
@@ -267,7 +275,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function countBuffers() {
         return AudioManager._bgmBufferArray.length;
       }
-
       /**
        * すべてのバッファーの再生を止める
        */
@@ -281,7 +288,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }
         });
       }
-
       /**
        * すべてのバッファーを再生する
        */
@@ -300,7 +306,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }
         });
       }
-
       /**
        * index(0~)を指定し、対象のバッファーを再生する
        *
@@ -328,7 +333,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           console.warn("!!WARN!! index number is not valid @ playBufferByIndex");
         }
       }
-
       /**
        * バッファーを指定個数に減らす
        *
@@ -344,13 +348,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         for (var i = quantity; i < length; ++i) {
           if (AudioManager._bgmBufferArray[i] !== null) {
             AudioManager._bgmBufferArray[i].stop();
+
             AudioManager._bgmBufferArray[i] = null;
           }
         }
+
         AudioManager._bgmArray = AudioManager._bgmArray.slice(0, quantity);
         AudioManager._bgmBufferArray = AudioManager._bgmBufferArray.slice(0, quantity);
       }
-
       /**
        * index(0~)を指定し、対象のバッファーを削除する
        *
@@ -362,7 +367,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function removeBufferByIndex(_index) {
         var index = parseInt(_index);
         var length = BgmBuffer.countBuffers();
-
         var newBgmArray = [];
         var newBgmBufferArray = [];
 
@@ -373,6 +377,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               newBgmBufferArray.push(AudioManager._bgmBufferArray[i]);
             } else {
               AudioManager._bgmBufferArray[i].stop();
+
               AudioManager._bgmBufferArray[i] = null;
               AudioManager._bgmArray[i] = null;
             }
@@ -384,7 +389,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           console.warn("!!WARN!! index number is not valid @ removeBufferByIndex");
         }
       }
-
       /**
        * index(0~)を指定し、対象のバッファーをアップデート
        *
@@ -402,14 +406,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var buffer = AudioManager._bgmBufferArray[index];
           var currentBgm = AudioManager._bgmArray[index];
           var newBgm = BgmBuffer.arrangeNewBgm(_newBgm, currentBgm);
-
           AudioManager._bgmArray[index] = newBgm;
           AudioManager.updateBufferParameters(buffer, AudioManager._bgmVolume, newBgm);
         } else {
           console.warn("!!WARN!! index number is not valid @ updateBufferByIndex");
         }
       }
-
       /**
        * BGM名をもとにバッファー一覧を検索し、対象のバッファーをアップデート
        *
@@ -427,13 +429,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             var buffer = AudioManager._bgmBufferArray[index];
             var currentBgm = AudioManager._bgmArray[index];
             var newBgm = BgmBuffer.arrangeNewBgm(_newBgm, currentBgm);
-
             AudioManager._bgmArray[index] = newBgm;
             AudioManager.updateBufferParameters(buffer, AudioManager._bgmVolume, newBgm);
           }
         });
       }
-
       /**
        * 未定義の値は currentBgm の値を使うよう調整
        *
@@ -450,22 +450,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (newBgm.name === null) {
           newBgm.name = _currentBgm.name;
         }
+
         if (newBgm.volume === null) {
           newBgm.volume = _currentBgm ? _currentBgm.volume : 90;
         }
+
         if (newBgm.pitch === null) {
           newBgm.pitch = _currentBgm ? _currentBgm.pitch : 100;
         }
+
         if (newBgm.pan === null) {
           newBgm.pan = _currentBgm ? _currentBgm.pan : 0;
         }
+
         if (newBgm.pos === null) {
           newBgm.pos = _currentBgm ? _currentBgm.pos : 0;
         }
 
         return newBgm;
       }
-
       /**
        * index(0~)を指定し、対象のバッファーをフェードイン
        *
@@ -490,7 +493,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           console.warn("!!WARN!! index number is not valid @ fadeInBufferByIndex");
         }
       }
-
       /**
        * index(0~)を指定し、対象のバッファーをフェードアウト
        *
@@ -538,7 +540,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return BgmBuffer;
   }();
 
-  var CrossFadeBgm = function () {
+  var CrossFadeBgm =
+  /*#__PURE__*/
+  function () {
     function CrossFadeBgm() {
       _classCallCheck(this, CrossFadeBgm);
 
@@ -546,24 +550,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       var parameters = PluginManager.parameters(pluginName);
       this._defaultDurationSec = Number(parameters["Default Fade Duration Sec"]);
       this.durationSec = this.defaultDurationSec;
-
       this.bgmBuffer = new BgmBuffer();
-
       this.nextBgm = {
         name: ""
       };
     }
-
     /** defaultDurationSec を取得、set はしない */
 
 
     _createClass(CrossFadeBgm, [{
       key: "startCrossFade",
 
-
       /** クロスフェードを開始 */
       value: function startCrossFade(_durationSec) {
         var durationSec = this.durationSec;
+
         if (Number(_durationSec) > 0) {
           durationSec = Number(_durationSec);
         }
@@ -571,15 +572,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (AudioManager._currentBgm !== null) {
           if (this.nextBgm.name !== AudioManager._currentBgm.name) {
             this.nextBgm = BgmBuffer.arrangeNewBgm(this.nextBgm, AudioManager._currentBgm);
-
             var position = BgmBuffer.getBuffersPositionByIndex(0);
             this.nextBgm.pos = position;
             AudioManager._currentBgm.pos = position;
-
             BgmBuffer.unshiftBuffer(this.nextBgm);
             BgmBuffer.reduceBuffers(2);
             BgmBuffer.playAllBuffers();
-
             BgmBuffer.fadeInBufferByIndex(0, durationSec * 0.75);
             BgmBuffer.fadeOutBufferByIndex(1, durationSec);
           }
@@ -590,7 +588,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           BgmBuffer.fadeInBufferByIndex(0, durationSec * 0.75);
         }
       }
-
       /** フェード時間(s)を設定 */
 
     }, {
@@ -600,7 +597,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.durationSec = Number(_durationSec);
         }
       }
-
       /** フェード時間(s)をデフォルトにリセット */
 
     }, {
@@ -608,7 +604,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function resetDuration() {
         this.durationSec = this.defaultDurationSec;
       }
-
       /**
        * 次に流すBGMをまとめて設定
        *
@@ -628,7 +623,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var pan = argsArray[2] !== undefined && argsArray[2] !== "" ? Number(argsArray[2]) : null;
         var pitch = argsArray[3] !== undefined && argsArray[3] !== "" ? Number(argsArray[3]) : null;
         var pos = argsArray[4] !== undefined && argsArray[4] !== "" ? Number(argsArray[4]) : null;
-
         this.nextBgm = {
           name: name,
           volume: volume,
@@ -637,7 +631,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           pos: pos
         };
       }
-
       /**
        * プラグインコマンドを登録
        */
@@ -651,22 +644,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       key: "initPluginCommands",
       value: function initPluginCommands() {
         var crossFadeBgmClass = new CrossFadeBgm();
-
         var _Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
 
         Game_Interpreter.prototype.pluginCommand = function (command, args) {
           _Game_Interpreter_pluginCommand.call(this, command, args);
+
           if (command === "CrossFadeBgm") {
             switch (args[0]) {
               case "set":
                 crossFadeBgmClass.setAll(args[1]);
                 break;
+
               case "start":
                 crossFadeBgmClass.startCrossFade(args[1]);
                 break;
+
               case "setDuration":
                 crossFadeBgmClass.setDuration(args[1]);
                 break;
+
               case "resetDuration":
                 crossFadeBgmClass.resetDuration();
                 break;
