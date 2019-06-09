@@ -555,11 +555,11 @@
     setAll(_args) {
       var argsArray = _args.split(",");
 
-      var name   = (argsArray[0] !== undefined && argsArray[0] !== "") ? String(argsArray[0]) : null;
-      var volume = (argsArray[1] !== undefined && argsArray[1] !== "") ? Number(argsArray[1]) : null;
-      var pan    = (argsArray[2] !== undefined && argsArray[2] !== "") ? Number(argsArray[2]) : null;
-      var pitch  = (argsArray[3] !== undefined && argsArray[3] !== "") ? Number(argsArray[3]) : null;
-      var pos    = (argsArray[4] !== undefined && argsArray[4] !== "") ? Number(argsArray[4]) : null;
+      const name   = (argsArray[0] !== undefined && argsArray[0] !== "") ? String(argsArray[0]) : null;
+      const volume = isNaN(parseFloat(argsArray[1])) ? null : Number(argsArray[1]);
+      const pan    = isNaN(parseFloat(argsArray[2])) ? null : Number(argsArray[2]);
+      const pitch  = isNaN(parseFloat(argsArray[3])) ? null : Number(argsArray[3]);
+      const pos    = isNaN(parseFloat(argsArray[4])) ? null : Number(argsArray[4]);
 
       this.nextBgm = {
         name  : name,
