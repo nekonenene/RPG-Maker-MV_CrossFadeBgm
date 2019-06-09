@@ -1,4 +1,4 @@
-"use strict";function _readOnlyError(name){throw new Error("\""+name+"\" is read-only")}function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function")}}function _defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor)}}function _createClass(Constructor,protoProps,staticProps){if(protoProps)_defineProperties(Constructor.prototype,protoProps);if(staticProps)_defineProperties(Constructor,staticProps);return Constructor}// --------------------------------------------------------------------------
+"use strict";function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function")}}function _defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor)}}function _createClass(Constructor,protoProps,staticProps){if(protoProps)_defineProperties(Constructor.prototype,protoProps);if(staticProps)_defineProperties(Constructor,staticProps);return Constructor}// --------------------------------------------------------------------------
 //
 // CrossFadeBgm
 //
@@ -56,7 +56,7 @@
  * @desc デフォルトのフェード時間（秒）
  * @default 2.0
  *
- */(function(){"use strict";var pluginName="HTN_CrossFadeBgm";/**
+ */(function(){'use strict';var pluginName="HTN_CrossFadeBgm";/**
    * bgm は Array クラス
    * buffer は WebAudio クラス、もしくは Html5Audio クラス
    */var BgmBuffer=/*#__PURE__*/function(){function BgmBuffer(){_classCallCheck(this,BgmBuffer);BgmBuffer.extendAudioManager();BgmBuffer.setIndexForCurrentBgm(0)}/**
@@ -81,19 +81,19 @@ BgmBuffer.playAllBuffers()}// AudioManager.updateCurrentBgm(bgm, pos);
      */},{key:"setIndexForCurrentBgm",value:function setIndexForCurrentBgm(_indexForCurrentBgm){var indexForCurrentBgm=parseInt(_indexForCurrentBgm);var length=BgmBuffer.countBuffers();if(indexForCurrentBgm===0||0<=indexForCurrentBgm&&indexForCurrentBgm<length){Object.defineProperty(AudioManager,"_bgmBuffer",{get:function get(){return AudioManager._bgmBufferArray[indexForCurrentBgm]},set:function set(_buffer){AudioManager._bgmBufferArray[indexForCurrentBgm]=_buffer},configurable:true});Object.defineProperty(AudioManager,"_currentBgm",{get:function get(){return AudioManager._bgmArray[indexForCurrentBgm]},set:function set(_bgm){AudioManager._bgmArray[indexForCurrentBgm]=_bgm},configurable:true})}else{console.warn("!!WARN!! index number is not valid @ setIndexForCurrentBgm")}}/**
      * バッファーを後ろに足す
      *
-     * @param _newBgm: Array 例 {name: "bgm_title", volume: 90, pitch: 100, pan: 0, pos: 0}
+     * @param _newBgm: Array 例 {name: 'bgm_title', volume: 90, pitch: 100, pan: 0, pos: 0}
      */},{key:"pushBuffer",value:function pushBuffer(_newBgm){// 未定義の部分は現在の曲の値をセットしてあげる
 var newBgm=BgmBuffer.arrangeNewBgm(_newBgm,AudioManager._currentBgm);AudioManager._bgmArray.push(newBgm);// 無名BGMも曲として扱うが、バッファーとしてはnull
 if(newBgm.name===""){AudioManager._bgmBufferArray.push(null)}else if(newBgm.name!==null){// 暗号化されたオーディオファイルの場合 @TODO 通らないっぽいので消してもいいかも
-if(Decrypter.hasEncryptedAudio&&AudioManager.shouldUseHtml5Audio()){var ext=AudioManager.audioFileExt();var url=AudioManager._path+"bgm/"+encodeURIComponent(bgm.name)+ext;url=(_readOnlyError("url"),Decrypter.extToEncryptExt(url));Decrypter.decryptHTML5Audio(url,bgm,bgm.pos);AudioManager._blobUrl=url}AudioManager._bgmBufferArray.push(AudioManager.createBuffer("bgm",newBgm.name))}else{console.warn("!!WARN!! next bgm name is null @ pushBuffer");AudioManager._bgmBufferArray.push(null);// _bgmArray の個数と整合性を保つため挿入
+if(Decrypter.hasEncryptedAudio&&AudioManager.shouldUseHtml5Audio()){var ext=AudioManager.audioFileExt();var url=AudioManager._path+"bgm/"+encodeURIComponent(bgm.name)+ext;url=Decrypter.extToEncryptExt(url);Decrypter.decryptHTML5Audio(url,bgm,bgm.pos);AudioManager._blobUrl=url}AudioManager._bgmBufferArray.push(AudioManager.createBuffer("bgm",newBgm.name))}else{console.warn("!!WARN!! next bgm name is null @ pushBuffer");AudioManager._bgmBufferArray.push(null);// _bgmArray の個数と整合性を保つため挿入
 }}/**
      * バッファーを先頭に足す
      *
-     * @param _newBgm: Array 例 {name: "bgm_title", volume: 90, pitch: 100, pan: 0, pos: 0}
+     * @param _newBgm: Array 例 {name: 'bgm_title', volume: 90, pitch: 100, pan: 0, pos: 0}
      */},{key:"unshiftBuffer",value:function unshiftBuffer(_newBgm){// 未定義の部分は現在の曲の値をセットしてあげる
 var newBgm=BgmBuffer.arrangeNewBgm(_newBgm,AudioManager._currentBgm);AudioManager._bgmArray.unshift(newBgm);// 無名BGMも曲として扱うが、バッファーとしてはnull
 if(newBgm.name===""){AudioManager._bgmBufferArray.unshift(null)}else if(newBgm.name!==null){// 暗号化されたオーディオファイルの場合 @TODO 通らないっぽいので消してもいいかも
-if(Decrypter.hasEncryptedAudio&&AudioManager.shouldUseHtml5Audio()){var ext=AudioManager.audioFileExt();var url=AudioManager._path+"bgm/"+encodeURIComponent(bgm.name)+ext;url=(_readOnlyError("url"),Decrypter.extToEncryptExt(url));Decrypter.decryptHTML5Audio(url,bgm,bgm.pos);AudioManager._blobUrl=url}AudioManager._bgmBufferArray.unshift(AudioManager.createBuffer("bgm",newBgm.name))}else{console.warn("!!WARN!! next bgm name is null @ unshiftBuffer");AudioManager._bgmBufferArray.unshift(null);// _bgmArray の個数と整合性を保つため挿入
+if(Decrypter.hasEncryptedAudio&&AudioManager.shouldUseHtml5Audio()){var ext=AudioManager.audioFileExt();var url=AudioManager._path+"bgm/"+encodeURIComponent(bgm.name)+ext;url=Decrypter.extToEncryptExt(url);Decrypter.decryptHTML5Audio(url,bgm,bgm.pos);AudioManager._blobUrl=url}AudioManager._bgmBufferArray.unshift(AudioManager.createBuffer("bgm",newBgm.name))}else{console.warn("!!WARN!! next bgm name is null @ unshiftBuffer");AudioManager._bgmBufferArray.unshift(null);// _bgmArray の個数と整合性を保つため挿入
 }}/**
      * バッファーの個数を数える
      *
@@ -118,12 +118,12 @@ if(Decrypter.hasEncryptedAudio&&AudioManager.shouldUseHtml5Audio()){var ext=Audi
      * index(0~)を指定し、対象のバッファーをアップデート
      *
      * @param _index: Number アップデート対象とするバッファーの、バッファー配列におけるインデックス(0~)
-     * @param _newBgm: Array 例 {name: "bgm_title", volume: 90, pitch: 100, pan: 0, pos: 0}
+     * @param _newBgm: Array 例 {name: 'bgm_title', volume: 90, pitch: 100, pan: 0, pos: 0}
      */},{key:"updateBufferByIndex",value:function updateBufferByIndex(_index,_newBgm){var index=parseInt(_index);var length=BgmBuffer.countBuffers();if(0<=index&&index<length){var buffer=AudioManager._bgmBufferArray[index];var currentBgm=AudioManager._bgmArray[index];var newBgm=BgmBuffer.arrangeNewBgm(_newBgm,currentBgm);AudioManager._bgmArray[index]=newBgm;AudioManager.updateBufferParameters(buffer,AudioManager._bgmVolume,newBgm)}else{console.warn("!!WARN!! index number is not valid @ updateBufferByIndex")}}/**
      * BGM名をもとにバッファー一覧を検索し、対象のバッファーをアップデート
      *
      * @param _bgmName: String 更新したい BGM名
-     * @param _newBgm: Array 例 {name: "bgm_title", volume: 90, pitch: 100, pan: 0, pos: 0}
+     * @param _newBgm: Array 例 {name: 'bgm_title', volume: 90, pitch: 100, pan: 0, pos: 0}
      */},{key:"updateBufferByBgmName",value:function updateBufferByBgmName(_bgmName,_newBgm){var bgmName=String(_bgmName);AudioManager._bgmArray.forEach(function(bgm,index){if(bgm.name===bgmName){var buffer=AudioManager._bgmBufferArray[index];var currentBgm=AudioManager._bgmArray[index];var newBgm=BgmBuffer.arrangeNewBgm(_newBgm,currentBgm);AudioManager._bgmArray[index]=newBgm;AudioManager.updateBufferParameters(buffer,AudioManager._bgmVolume,newBgm)}})}/**
      * 未定義の値は currentBgm の値を使うよう調整
      *

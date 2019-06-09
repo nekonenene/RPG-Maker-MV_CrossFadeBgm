@@ -59,9 +59,9 @@
  */
 
 (function() {
-  "use strict";
+  'use strict';
 
-  const pluginName = "HTN_CrossFadeBgm";
+  const pluginName = 'HTN_CrossFadeBgm';
 
   /**
    * bgm は Array クラス
@@ -151,7 +151,7 @@
       const length = BgmBuffer.countBuffers();
 
       if (indexForCurrentBgm === 0 || (0 <= indexForCurrentBgm && indexForCurrentBgm < length)) {
-        Object.defineProperty(AudioManager, "_bgmBuffer", {
+        Object.defineProperty(AudioManager, '_bgmBuffer', {
           get: function() {
             return AudioManager._bgmBufferArray[indexForCurrentBgm];
           },
@@ -161,7 +161,7 @@
           configurable: true
         });
 
-        Object.defineProperty(AudioManager, "_currentBgm", {
+        Object.defineProperty(AudioManager, '_currentBgm', {
           get: function() {
             return AudioManager._bgmArray[indexForCurrentBgm];
           },
@@ -171,14 +171,14 @@
           configurable: true
         });
       } else {
-        console.warn("!!WARN!! index number is not valid @ setIndexForCurrentBgm");
+        console.warn('!!WARN!! index number is not valid @ setIndexForCurrentBgm');
       }
     }
 
     /**
      * バッファーを後ろに足す
      *
-     * @param _newBgm: Array 例 {name: "bgm_title", volume: 90, pitch: 100, pan: 0, pos: 0}
+     * @param _newBgm: Array 例 {name: 'bgm_title', volume: 90, pitch: 100, pan: 0, pos: 0}
      */
     static pushBuffer(_newBgm) {
       // 未定義の部分は現在の曲の値をセットしてあげる
@@ -187,29 +187,29 @@
       AudioManager._bgmArray.push(newBgm);
 
       // 無名BGMも曲として扱うが、バッファーとしてはnull
-      if (newBgm.name === "") {
+      if (newBgm.name === '') {
         AudioManager._bgmBufferArray.push(null);
       } else if (newBgm.name !== null) {
         // 暗号化されたオーディオファイルの場合 @TODO 通らないっぽいので消してもいいかも
         if (Decrypter.hasEncryptedAudio && AudioManager.shouldUseHtml5Audio()) {
           const ext = AudioManager.audioFileExt();
-          const url = AudioManager._path + "bgm/" + encodeURIComponent(bgm.name) + ext;
+          let url = AudioManager._path + 'bgm/' + encodeURIComponent(bgm.name) + ext;
           url = Decrypter.extToEncryptExt(url);
           Decrypter.decryptHTML5Audio(url, bgm, bgm.pos);
           AudioManager._blobUrl = url;
         }
-        AudioManager._bgmBufferArray.push(AudioManager.createBuffer("bgm", newBgm.name));
+        AudioManager._bgmBufferArray.push(AudioManager.createBuffer('bgm', newBgm.name));
       } else {
-        console.warn("!!WARN!! next bgm name is null @ pushBuffer");
+        console.warn('!!WARN!! next bgm name is null @ pushBuffer');
         AudioManager._bgmBufferArray.push(null); // _bgmArray の個数と整合性を保つため挿入
       }
-      // console.log("Bufferの個数: " + BgmBuffer.countBuffers()); // @TODO: あとで消す
+      // console.log('Bufferの個数: ' + BgmBuffer.countBuffers()); // @TODO: あとで消す
     }
 
     /**
      * バッファーを先頭に足す
      *
-     * @param _newBgm: Array 例 {name: "bgm_title", volume: 90, pitch: 100, pan: 0, pos: 0}
+     * @param _newBgm: Array 例 {name: 'bgm_title', volume: 90, pitch: 100, pan: 0, pos: 0}
      */
     static unshiftBuffer(_newBgm) {
       // 未定義の部分は現在の曲の値をセットしてあげる
@@ -218,24 +218,24 @@
       AudioManager._bgmArray.unshift(newBgm);
 
       // 無名BGMも曲として扱うが、バッファーとしてはnull
-      if (newBgm.name === "") {
+      if (newBgm.name === '') {
         AudioManager._bgmBufferArray.unshift(null);
       } else if (newBgm.name !== null) {
         // 暗号化されたオーディオファイルの場合 @TODO 通らないっぽいので消してもいいかも
         if (Decrypter.hasEncryptedAudio && AudioManager.shouldUseHtml5Audio()) {
           const ext = AudioManager.audioFileExt();
-          const url = AudioManager._path + "bgm/" + encodeURIComponent(bgm.name) + ext;
+          let url = AudioManager._path + 'bgm/' + encodeURIComponent(bgm.name) + ext;
           url = Decrypter.extToEncryptExt(url);
           Decrypter.decryptHTML5Audio(url, bgm, bgm.pos);
           AudioManager._blobUrl = url;
         }
 
-        AudioManager._bgmBufferArray.unshift(AudioManager.createBuffer("bgm", newBgm.name));
+        AudioManager._bgmBufferArray.unshift(AudioManager.createBuffer('bgm', newBgm.name));
       } else {
-        console.warn("!!WARN!! next bgm name is null @ unshiftBuffer");
+        console.warn('!!WARN!! next bgm name is null @ unshiftBuffer');
         AudioManager._bgmBufferArray.unshift(null); // _bgmArray の個数と整合性を保つため挿入
       }
-      // console.log("Bufferの個数: " + BgmBuffer.countBuffers()); // @TODO: あとで消す
+      // console.log('Bufferの個数: ' + BgmBuffer.countBuffers()); // @TODO: あとで消す
     }
 
     /**
@@ -295,7 +295,7 @@
           }
         }
       } else {
-        console.warn("!!WARN!! index number is not valid @ playBufferByIndex");
+        console.warn('!!WARN!! index number is not valid @ playBufferByIndex');
       }
     }
 
@@ -345,7 +345,7 @@
         AudioManager._bgmArray = newBgmArray;
         AudioManager._bgmBufferArray = newBgmBufferArray;
       } else {
-        console.warn("!!WARN!! index number is not valid @ removeBufferByIndex");
+        console.warn('!!WARN!! index number is not valid @ removeBufferByIndex');
       }
     }
 
@@ -353,7 +353,7 @@
      * index(0~)を指定し、対象のバッファーをアップデート
      *
      * @param _index: Number アップデート対象とするバッファーの、バッファー配列におけるインデックス(0~)
-     * @param _newBgm: Array 例 {name: "bgm_title", volume: 90, pitch: 100, pan: 0, pos: 0}
+     * @param _newBgm: Array 例 {name: 'bgm_title', volume: 90, pitch: 100, pan: 0, pos: 0}
      */
     static updateBufferByIndex(_index, _newBgm) {
       const index = parseInt(_index);
@@ -367,7 +367,7 @@
         AudioManager._bgmArray[index] = newBgm;
         AudioManager.updateBufferParameters(buffer, AudioManager._bgmVolume, newBgm);
       } else {
-        console.warn("!!WARN!! index number is not valid @ updateBufferByIndex");
+        console.warn('!!WARN!! index number is not valid @ updateBufferByIndex');
       }
     }
 
@@ -375,7 +375,7 @@
      * BGM名をもとにバッファー一覧を検索し、対象のバッファーをアップデート
      *
      * @param _bgmName: String 更新したい BGM名
-     * @param _newBgm: Array 例 {name: "bgm_title", volume: 90, pitch: 100, pan: 0, pos: 0}
+     * @param _newBgm: Array 例 {name: 'bgm_title', volume: 90, pitch: 100, pan: 0, pos: 0}
      */
     static updateBufferByBgmName(_bgmName, _newBgm) {
       const bgmName = String(_bgmName);
@@ -439,7 +439,7 @@
           buffer.fadeIn(fadeDurationSec);
         }
       } else {
-        console.warn("!!WARN!! index number is not valid @ fadeInBufferByIndex");
+        console.warn('!!WARN!! index number is not valid @ fadeInBufferByIndex');
       }
     }
 
@@ -461,7 +461,7 @@
           buffer.fadeOut(fadeDurationSec);
         }
       } else {
-        console.warn("!!WARN!! index number is not valid @ fadeOutBufferByIndex");
+        console.warn('!!WARN!! index number is not valid @ fadeOutBufferByIndex');
       }
     }
 
@@ -478,7 +478,7 @@
           return null;
         }
       } else {
-        console.warn("!!WARN!! index number is not valid @ fadeInBufferByIndex");
+        console.warn('!!WARN!! index number is not valid @ fadeInBufferByIndex');
       }
     }
   }
@@ -487,13 +487,13 @@
     constructor() {
       // プラグインパラメーターからデフォルトフェード時間を設定
       const parameters = PluginManager.parameters(pluginName);
-      this._defaultDurationSec = Number(parameters["Default Fade Duration Sec"]);
+      this._defaultDurationSec = Number(parameters['Default Fade Duration Sec']);
       this.durationSec = this.defaultDurationSec;
 
       this.bgmBuffer = new BgmBuffer();
 
       this.nextBgm = {
-        name: "",
+        name: '',
       };
     }
 
@@ -553,9 +553,9 @@
      * @param _args: String
      */
     setAll(_args) {
-      const argsArray = _args.split(",");
+      const argsArray = _args.split(',');
 
-      const name   = (argsArray[0] == null || argsArray[0] === "") ? null : String(argsArray[0]);
+      const name   = (argsArray[0] == null || argsArray[0] === '') ? null : String(argsArray[0]);
       const volume = isNaN(parseFloat(argsArray[1])) ? null : Number(argsArray[1]);
       const pan    = isNaN(parseFloat(argsArray[2])) ? null : Number(argsArray[2]);
       const pitch  = isNaN(parseFloat(argsArray[3])) ? null : Number(argsArray[3]);
@@ -581,18 +581,18 @@
 
       Game_Interpreter.prototype.pluginCommand = function(command, args) {
         _Game_Interpreter_pluginCommand.call(this, command, args);
-        if (command === "CrossFadeBgm") {
+        if (command === 'CrossFadeBgm') {
           switch (args[0]) {
-            case "set":
+            case 'set':
               crossFadeBgmClass.setAll(args[1]);
               break;
-            case "start":
+            case 'start':
               crossFadeBgmClass.startCrossFade(args[1]);
               break;
-            case "setDuration":
+            case 'setDuration':
               crossFadeBgmClass.setDuration(args[1]);
               break;
-            case "resetDuration":
+            case 'resetDuration':
               crossFadeBgmClass.resetDuration();
               break;
           }
