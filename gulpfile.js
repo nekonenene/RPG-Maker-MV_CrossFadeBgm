@@ -36,7 +36,7 @@ gulp.task('dev-deploy', function(callback) {
 
 /* gulp watch */
 gulp.task('watch', function () {
-  gulp.watch(['source/**/*.js'], gulp.parallel('deploy'));
+  gulp.watch(['source/**/*.js'], gulp.parallel('deploy', 'dev-deploy'));
 });
 
 /* gulp とコマンドを打つと実行される */
