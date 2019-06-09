@@ -2,16 +2,17 @@
   "name": "babel-and-more",
   "description": "convert js by babel",
   "scripts": {
+    "start": "gulp",
     "deploy": "gulp deploy"
   },
   "author": "ハトネコエ",
   "private": "true",
   "devDependencies": {
-    "babel-preset-es2015": "latest",
-    "gulp": "latest",
-    "gulp-babel": "latest",
-    "gulp-replace": "latest",
-    "gulp-sourcemaps": "latest",
-    "pump": "^1.0.1"
+    "@babel/preset-env": "^7.4.5",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-replace": "^1.0.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "pump": "^1.0.3"
   }
 }
