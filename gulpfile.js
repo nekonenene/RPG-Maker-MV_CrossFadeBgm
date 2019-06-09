@@ -13,7 +13,6 @@ gulp.task('deploy', function(callback) {
   pump([
     gulp.src('source/**/*.js'),
     replace(/^.*console\.log.*$\n/gm, ''), // console.log のある行を削除
-    replace(/\t/g, '  '), // babel でネストが深くなるのでタブ文字を2文字スペースに
     babel({
       presets: ['@babel/env']
     }),
@@ -26,7 +25,6 @@ gulp.task('dev-deploy', function(callback) {
   pump([
     gulp.src('source/**/*.js'),
     sourcemaps.init(),
-    replace(/\t/g, '  '), // babel でネストが深くなるのでタブ文字を2文字スペースに
     babel({
       presets: ['@babel/env']
     }),
