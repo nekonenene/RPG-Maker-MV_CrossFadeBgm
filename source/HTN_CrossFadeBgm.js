@@ -151,7 +151,7 @@
       const length = BgmBuffer.countBuffers();
 
       if (indexForCurrentBgm === 0 || (0 <= indexForCurrentBgm && indexForCurrentBgm < length)) {
-        Object.defineProperty(AudioManager, '_bgmBuffer', {
+        Object.defineProperty(AudioManager, "_bgmBuffer", {
           get: function() {
             return AudioManager._bgmBufferArray[indexForCurrentBgm];
           },
@@ -161,7 +161,7 @@
           configurable: true
         });
 
-        Object.defineProperty(AudioManager, '_currentBgm', {
+        Object.defineProperty(AudioManager, "_currentBgm", {
           get: function() {
             return AudioManager._bgmArray[indexForCurrentBgm];
           },
