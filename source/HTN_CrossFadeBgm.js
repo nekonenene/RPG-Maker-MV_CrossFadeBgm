@@ -54,7 +54,7 @@
  *
  * @param Default Fade Duration Sec
  * @desc デフォルトのフェード時間（秒）
- * @default 1.20
+ * @default 2.0
  *
  */
 
