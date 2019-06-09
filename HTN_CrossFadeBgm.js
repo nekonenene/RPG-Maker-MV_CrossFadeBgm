@@ -6,6 +6,7 @@
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 //
+// 2019/06/10 ver0.3.0 startコマンドでオプションの指定ができるように
 // 2017/04/18 ver0.2.1 setDurationコマンドが動作していなかったので修正、startコマンドにオプション追加
 // 2016/09/13 ver0.2.0 配布jsにbabelをかまし、Internet Explorerでも動作するように
 // 2016/09/12 ver0.1.2 コメントの追加や、ログ出力のコメントアウトなど
@@ -20,13 +21,17 @@
  *
  * @help
  *
- * プラグインコマンド:
- *   CrossFadeBgm set bgm_name       # 次に流す曲を指定します
- *   CrossFadeBgm set bgm_name,60    # 曲名のほかに音量などの指定が可能です。詳細は下の【setコマンドの詳細】をご覧ください
- *   CrossFadeBgm start              # クロスフェードを開始します
- *   CrossFadeBgm start 2.5          # フェード時間（この例では2.5秒）を指定しつつクロスフェードを開始します。デフォルトのフェード時間は変わりません
- *   CrossFadeBgm setDuration 8.41   # デフォルトのフェード時間を新たに定義します（この例では8.41秒）
- *   CrossFadeBgm resetDuration      # デフォルトのフェード時間を、プラグイン管理ウィンドウで指定している値に戻します
+ * 【もっともシンプルな使い方】
+ *   プラグインコマンドで「CrossFadeBgm start _,Ship1」と書いたイベントを置いてみてください
+ *
+ * 【プラグインコマンド詳細】
+ *   CrossFadeBgm set bgm_name          # 次に流す曲を指定します
+ *   CrossFadeBgm set bgm_name,60       # 曲名のほかに音量などの指定が可能です。詳細は下の【setコマンドの詳細】をご覧ください
+ *   CrossFadeBgm start                 # クロスフェードを開始します
+ *   CrossFadeBgm start 2.5             # フェード時間（この例では2.5秒）を指定しつつクロスフェードを開始します。デフォルトのフェード時間は変わりません
+ *   CrossFadeBgm start 2.5,bgm_name,60 # フェード時間の後ろにsetコマンドのオプションを指定しつつクロスフェードを開始します
+ *   CrossFadeBgm setDuration 8.41      # デフォルトのフェード時間を新たに定義します（この例では8.41秒）
+ *   CrossFadeBgm resetDuration         # デフォルトのフェード時間を、プラグイン管理ウィンドウで指定している値に戻します
  *
  * 【setコマンドの詳細】
  *   CrossFadeBgm set bgm_name,volume,pan,pitch  # setコマンドでは 4つのオプションが指定できます
@@ -39,10 +44,11 @@
  *
  *   <example>
  *   CrossFadeBgm set Ship1,90,0,100 # 例えばこのように指定できます。カンマのあとにスペースを入れてはいけません
- *   CrossFadeBgm set Ship1,,,100    # 途中の値を省略することが可能です。しかし、BGM名と音量は最低限指定した方がいいです
- *                                   # 省略された音量などの値は、現在流れてるBGMの値が使われます
+ *   CrossFadeBgm set Ship1,,,100    # 途中の値を省略することが可能です。ただし、BGM名は最低限指定してください
+ *                                   # 省略された音量などの値は、現在流れているBGMの値が使われます
+ *   CrossFadeBgm set Ship1,_,_,100  # カンマだけが並ぶのは見づらいなと感じる場合は、アンダーバーを使うのがよいかもしれません
  *
- * 注意事項:
+ * 【注意事項】
  *   ツクールでの「デプロイメント」でゲームを出力するとき、「未使用ファイルを含まない」のチェックをONにした場合、
  *   ツクールはプラグインコマンドでどのBGMが使われてるのかまでは見ませんので、
  *   本当は使っているのに、使ってないとみなされて必要なBGMファイルが出力されない場合があります。
@@ -50,7 +56,7 @@
  *   これではそのBGMを再生しようとしたときにエラーが発生してしまいます。
  *
  *   対策としては、「未使用ファイルを含まない」のチェックをOFFでデプロイメントするか、
- *   ダミーの（ゲームでは実際通らない）マップを用意して、出力されないBGMを演奏するイベントをそこに置くといいかと思います。
+ *   ダミーの（ゲームでは実際通らない）マップを用意して、出力されないBGMを演奏するイベントをそこに置くとよいかと思います。
  *
  * @param Default Fade Duration Sec
  * @desc デフォルトのフェード時間（秒）
@@ -141,7 +147,7 @@ if(Decrypter.hasEncryptedAudio&&AudioManager.shouldUseHtml5Audio()){var ext=Audi
      * @param _index: Number アップデート対象とするバッファーの、バッファー配列におけるインデックス(0~)
      * @param _fadeDurationSec: Number フェードアウトにかける時間（秒）
      */},{key:"fadeOutBufferByIndex",value:function fadeOutBufferByIndex(_index,_fadeDurationSec){var index=parseInt(_index);var fadeDurationSec=Number(_fadeDurationSec);var length=BgmBuffer.countBuffers();if(0<=index&&index<length){var buffer=AudioManager._bgmBufferArray[index];if(buffer!==null){buffer.fadeOut(fadeDurationSec)}}else{console.warn("!!WARN!! index number is not valid @ fadeOutBufferByIndex")}}},{key:"getBuffersPositionByIndex",value:function getBuffersPositionByIndex(_index){var index=parseInt(_index);var length=BgmBuffer.countBuffers();if(0<=index&&index<length){var buffer=AudioManager._bgmBufferArray[index];if(buffer!==null){return buffer.seek()||0}else{return null}}else{console.warn("!!WARN!! index number is not valid @ fadeInBufferByIndex")}}}]);return BgmBuffer}();var CrossFadeBgm=/*#__PURE__*/function(){function CrossFadeBgm(){_classCallCheck(this,CrossFadeBgm);// プラグインパラメーターからデフォルトフェード時間を設定
-var parameters=PluginManager.parameters(pluginName);this._defaultDurationSec=Number(parameters["Default Fade Duration Sec"]);this.durationSec=this.defaultDurationSec;this.bgmBuffer=new BgmBuffer;this.nextBgm={name:""}}/** defaultDurationSec を取得、set はしない */_createClass(CrossFadeBgm,[{key:"startCrossFade",/** クロスフェードを開始 */value:function startCrossFade(_durationSec){var durationSec=this.durationSec;if(Number(_durationSec)>0){durationSec=Number(_durationSec)}if(AudioManager._currentBgm!==null){if(this.nextBgm.name!==AudioManager._currentBgm.name){this.nextBgm=BgmBuffer.arrangeNewBgm(this.nextBgm,AudioManager._currentBgm);var position=BgmBuffer.getBuffersPositionByIndex(0);this.nextBgm.pos=position;AudioManager._currentBgm.pos=position;BgmBuffer.unshiftBuffer(this.nextBgm);BgmBuffer.reduceBuffers(2);BgmBuffer.playAllBuffers();BgmBuffer.fadeInBufferByIndex(0,durationSec*0.75);BgmBuffer.fadeOutBufferByIndex(1,durationSec)}}else{BgmBuffer.unshiftBuffer(this.nextBgm);BgmBuffer.reduceBuffers(2);BgmBuffer.playAllBuffers();BgmBuffer.fadeInBufferByIndex(0,durationSec*0.75)}}/** フェード時間(s)を設定 */},{key:"setDuration",value:function setDuration(_durationSec){if(Number(_durationSec)>0){this.durationSec=Number(_durationSec)}}/** フェード時間(s)をデフォルトにリセット */},{key:"resetDuration",value:function resetDuration(){this.durationSec=this.defaultDurationSec}/**
+var parameters=PluginManager.parameters(pluginName);this._defaultDurationSec=Number(parameters["Default Fade Duration Sec"]);this.durationSec=this.defaultDurationSec;this.bgmBuffer=new BgmBuffer;this.nextBgm={name:""}}/** defaultDurationSec を取得、set はしない */_createClass(CrossFadeBgm,[{key:"startCrossFade",/** クロスフェードを開始 */value:function startCrossFade(_options){var durationSec=this.durationSec;if(_options!=null){var optionsArray=_options.split(",");var opt1=optionsArray.shift();if(!isNaN(parseFloat(opt1))&&Number(opt1)>=0){durationSec=Number(opt1)}if(optionsArray.length>0){this.setAll(optionsArray.join(","))}}if(AudioManager._currentBgm!==null){if(this.nextBgm.name!==AudioManager._currentBgm.name){this.nextBgm=BgmBuffer.arrangeNewBgm(this.nextBgm,AudioManager._currentBgm);var position=BgmBuffer.getBuffersPositionByIndex(0);this.nextBgm.pos=position;AudioManager._currentBgm.pos=position;BgmBuffer.unshiftBuffer(this.nextBgm);BgmBuffer.reduceBuffers(2);BgmBuffer.playAllBuffers();BgmBuffer.fadeInBufferByIndex(0,durationSec*0.75);BgmBuffer.fadeOutBufferByIndex(1,durationSec)}}else{BgmBuffer.unshiftBuffer(this.nextBgm);BgmBuffer.reduceBuffers(2);BgmBuffer.playAllBuffers();BgmBuffer.fadeInBufferByIndex(0,durationSec*0.75)}}/** フェード時間(s)を設定 */},{key:"setDuration",value:function setDuration(_durationSec){if(Number(_durationSec)>0){this.durationSec=Number(_durationSec)}}/** フェード時間(s)をデフォルトにリセット */},{key:"resetDuration",value:function resetDuration(){this.durationSec=this.defaultDurationSec}/**
      * 次に流すBGMをまとめて設定
      *
      * name,volume,pan,pitch,pos の順でまとめて書く
