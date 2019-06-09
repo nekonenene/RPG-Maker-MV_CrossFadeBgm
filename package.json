@@ -1,12 +1,11 @@
 {
-  "name": "babel-and-more",
-  "description": "convert js by babel",
+  "name": "cross_fade_bgm",
+  "description": "RPG Maker MV Plugin: Cross fade BGM",
   "scripts": {
     "start": "gulp",
     "deploy": "gulp deploy"
   },
-  "author": "ハトネコエ",
-  "private": "true",
+  "author": "ハトネコエ (nekonenene)",
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
