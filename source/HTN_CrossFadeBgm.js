@@ -555,7 +555,7 @@
     setAll(_args) {
       var argsArray = _args.split(",");
 
-      const name   = (argsArray[0] !== undefined && argsArray[0] !== "") ? String(argsArray[0]) : null;
+      const name   = (argsArray[0] == null || argsArray[0] === "") ? null : String(argsArray[0]);
       const volume = isNaN(parseFloat(argsArray[1])) ? null : Number(argsArray[1]);
       const pan    = isNaN(parseFloat(argsArray[2])) ? null : Number(argsArray[2]);
       const pitch  = isNaN(parseFloat(argsArray[3])) ? null : Number(argsArray[3]);
