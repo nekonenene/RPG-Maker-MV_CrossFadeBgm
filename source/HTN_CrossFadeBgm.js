@@ -6,6 +6,7 @@
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 //
+// 2019/06/10 ver0.3.1 「BGMの演奏」で、別パラメーターの同曲が再生されない不具合を修正
 // 2019/06/10 ver0.3.0 startコマンドでオプションの指定ができるように
 // 2017/04/18 ver0.2.1 setDurationコマンドが動作していなかったので修正、startコマンドにオプション追加
 // 2016/09/13 ver0.2.0 配布jsにbabelをかまし、Internet Explorerでも動作するように
@@ -22,14 +23,14 @@
  * @help
  *
  * 【もっともシンプルな使い方】
- *   プラグインコマンドで「CrossFadeBgm start _,Ship1」と書いたイベントを置いてみてください
+ *   プラグインコマンドで「CrossFadeBgm start _,Ship1,90,0,100」と書いたイベントを置いてみてください
  *
  * 【プラグインコマンド詳細】
  *   CrossFadeBgm set bgm_name          # 次に流す曲を指定します
- *   CrossFadeBgm set bgm_name,60       # 曲名のほかに音量などの指定が可能です。詳細は下の【setコマンドの詳細】をご覧ください
+ *   CrossFadeBgm set bgm_name,60,0,100 # 曲名のほかに音量などの指定が可能です。詳細は下の【setコマンドの詳細】をご覧ください
  *   CrossFadeBgm start                 # クロスフェードを開始します
  *   CrossFadeBgm start 2.5             # フェード時間（この例では2.5秒）を指定しつつクロスフェードを開始します。デフォルトのフェード時間は変わりません
- *   CrossFadeBgm start 2.5,bgm_name,60 # フェード時間の後ろにsetコマンドのオプションを指定しつつクロスフェードを開始します
+ *   CrossFadeBgm start 2.5,bgm_name,90 # フェード時間の後ろにsetコマンドで扱うオプションを指定しつつ、クロスフェードを開始します
  *   CrossFadeBgm setDuration 8.41      # デフォルトのフェード時間を新たに定義します（この例では8.41秒）
  *   CrossFadeBgm resetDuration         # デフォルトのフェード時間を、プラグイン管理ウィンドウで指定している値に戻します
  *
@@ -111,7 +112,7 @@
             }
           }
         }
-        // AudioManager.updateCurrentBgm(bgm, pos);
+        AudioManager.updateCurrentBgm(bgm, pos);
       };
 
       /** playEncryptedBgm から呼ばれる。暗号化されたBGMを再生するためのバッファを作成 */
@@ -125,7 +126,7 @@
           // AudioManager._bgmBuffer.play(true, pos || 0);
           BgmBuffer.playAllBuffers();
         }
-        // AudioManager.updateCurrentBgm(bgm, pos);
+        AudioManager.updateCurrentBgm(bgm, pos);
       };
 
       /**
