@@ -1,20 +1,12 @@
-var pump = require('pump');
-var gulp = require('gulp');
+const pump = require('pump');
+const gulp = require('gulp');
 
 // gulp plugins
-var sourcemaps = require('gulp-sourcemaps');
-var replace = require('gulp-replace');
+const sourcemaps = require('gulp-sourcemaps');
+const replace = require('gulp-replace');
 
 // gulp for JavaScript
-var babel  = require('gulp-babel');
-
-/* gulp とコマンドを打つと実行される */
-gulp.task('default', ['watch'] );
-
-/* gulp watch */
-gulp.task('watch', function() {
-  gulp.watch(['source/**/*.js'], ['deploy']);
-});
+const babel = require('gulp-babel');
 
 /* deploy : babel して console.log の行は消す */
 gulp.task('deploy', function(callback) {
@@ -23,7 +15,7 @@ gulp.task('deploy', function(callback) {
     replace(/^.*console\.log.*$\n/gm, ''), // console.log のある行を削除
     replace(/\t/g, '  '), // babel でネストが深くなるのでタブ文字を2文字スペースに
     babel({
-      presets: ['es2015']
+      presets: ['@babel/env']
     }),
     gulp.dest('./')
   ], callback);
@@ -36,9 +28,17 @@ gulp.task('dev-deploy', function(callback) {
     sourcemaps.init(),
     replace(/\t/g, '  '), // babel でネストが深くなるのでタブ文字を2文字スペースに
     babel({
-      presets: ['es2015']
+      presets: ['@babel/env']
     }),
     sourcemaps.write(),
     gulp.dest('./dev-dest/')
   ], callback);
 });
+
+/* gulp watch */
+gulp.task('watch', function () {
+  gulp.watch(['source/**/*.js'], gulp.parallel('deploy'));
+});
+
+/* gulp とコマンドを打つと実行される */
+gulp.task('default', gulp.parallel('watch'));
