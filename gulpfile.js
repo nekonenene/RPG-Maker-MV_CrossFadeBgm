@@ -14,7 +14,8 @@ gulp.task('deploy', function(callback) {
     gulp.src('source/**/*.js'),
     replace(/^.*console\.log.*$\n/gm, ''), // console.log のある行を削除
     babel({
-      presets: ['@babel/env']
+      presets: ['@babel/env'],
+      minified: true,
     }),
     gulp.dest('./')
   ], callback);
