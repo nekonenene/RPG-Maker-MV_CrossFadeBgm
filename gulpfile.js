@@ -8,7 +8,7 @@ const replace = require('gulp-replace');
 // gulp for JavaScript
 const babel = require('gulp-babel');
 
-/* deploy : babel して console.log の行は消す */
+/* deploy : console.log の行を消したのち babel */
 gulp.task('deploy', function(callback) {
   pump([
     gulp.src('source/**/*.js'),
@@ -21,7 +21,7 @@ gulp.task('deploy', function(callback) {
   ], callback);
 });
 
-/* dev-deploy : sourcemap 働かせつつ babel */
+/* dev-deploy : sourcemap を働かせつつ babel */
 gulp.task('dev-deploy', function(callback) {
   pump([
     gulp.src('source/**/*.js'),
